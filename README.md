@@ -1,9 +1,9 @@
-# Project Name
+# EEGsourceLocalizer
 
-Developer(s) Name:
-Date of project start:
+Developer(s) Name: Leila Mousapour
+Date of project start: September 26, 2020
 
-This project is ...
+This scientific software will implement several techniques to map EEG signals from electrode space to source space.
 
 The folders and files for this project are as follows:
 
