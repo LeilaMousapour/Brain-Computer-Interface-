@@ -2,10 +2,11 @@
 
 \usepackage{tabularx}
 \usepackage{booktabs}
+\usepackage{amssymb}
 
-\title{CAS 741: Problem Statement\\Title of Project}
+\title{CAS 741: Problem Statement\\EEG Source Localizer}
 
-\author{Author name and macid}
+\author{Leila Mousapour [mousapol]}
 
 \date{}
 
@@ -21,18 +22,32 @@
 \toprule
 \textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
 \midrule
-Date1 & Name(s) & Description of changes\\
-Date2 & Name(s) & Description of changes\\
-... & ... & ...\\
+26/09/2020 & Leila Mousapour & First version of the problem statement was written\\
 \bottomrule
 \end{tabularx}
 \end{table}
 
-Put your problem statement here.  Comments to you can be added, like this:
+\textbf{Input}: Electroencephalogram signals
+\\
+{\footnotesize 64 channels x time samples (recording time/sampling frequency) $\mu$volt (EEG time series)}
+\\*
+
+\textbf{Output}: Active sources inside the brain
+\\
+{\footnotesize Number of sources x time samples (recording time/sampling frequency)  $\mu$volt (source time courses)}
+\\*
+
+Electroencephalography (EEG), which is a method to record electrical activity of the brain, has a plethora of applications such as decoding mental imageries used in brain-computer interfaces. One of the big open problems in EEG signal processing is finding a good feature space after which we can apply machine learning and classification methods to the data. The standard in the field is to start with the electrode space and then extract features such as amplitude or latencies (time domain features), frequency power spectra (frequency features), common spatial patterns (spatial features) etc. A novel approach that we would like to investigate is to first map EEG signals from electrode space into spatial coordinates of the brain to achieve more useful features.
+\\
+
+These techniques are known as "source localization" algorithms which can be applied to the signals recorded from the scalp and locate the underlying active sources generating the activity sensed on the electrodes. expected to increase the signal to noise ratio. Additionally, mapping the activity from 64-channel space to fewer sources reduces data dimensionality immensely, helps avoid overfitting and redundancy, leads to better human interpretations and less computational cost with the simplification of models. Therefore, this scientific software will implement several techniques to map EEG signals from electrode space to source space.
+\\
+
+Comments by the instructor were provided in the following format:
 
 \wss{comment}
 
-You can also leave comments for yourself, like this:
+Comments by the author were provided in the following format:
 
 \an{comment}
 
