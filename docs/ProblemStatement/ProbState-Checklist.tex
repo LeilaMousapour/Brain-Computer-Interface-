@@ -1,78 +1,74 @@
-\documentclass[12pt]{article}
+\documentclass{article}
 
-\usepackage{hyperref}
-\hypersetup{colorlinks=true,
-    linkcolor=blue,
-    citecolor=blue,
-    filecolor=blue,
-    urlcolor=blue,
-    unicode=false}
-\urlstyle{same}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{amssymb}
 
-\usepackage{enumitem,amssymb}
-\newlist{todolist}{itemize}{2}
-\setlist[todolist]{label=$\square$}
-\usepackage{pifont}
-\newcommand{\cmark}{\ding{51}}%
-\newcommand{\xmark}{\ding{55}}%
-\newcommand{\done}{\rlap{$\square$}{\raisebox{2pt}{\large\hspace{1pt}\cmark}}%
-\hspace{-2.5pt}}
-\newcommand{\wontfix}{\rlap{$\square$}{\large\hspace{1pt}\xmark}}
+\title{CAS 741: Problem Statement\\EEG Source Localizer}
+
+\author{Leila Mousapour [mousapol]}
+
+\date{}
+
+\input{../Comments}
 
 \begin{document}
 
-\title{Problem Statement Checklist}
-\author{Spencer Smith}
-\date{\today}
-
 \maketitle
 
-% Show an item is done by   \item[\done] Frame the problem
-% Show an item will not be fixed by   \item[\wontfix] profit
+\begin{table}[hp]
+\caption{Revision History} \label{TblRevisionHistory}
+\begin{tabularx}{\textwidth}{llX}
+\toprule
+\textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
+\midrule
+26/09/2020 & Leila Mousapour & First version of the problem statement was written\\
+5/10/2020 & Leila Mousapour & Second version of the problem statement was written\\
+\bottomrule
+\end{tabularx}
+\end{table}
 
+\textbf{Inputs}: 
 \begin{itemize}
-  
-\item Uses the provided \texttt{tex} file as a base
-  \begin{todolist}
-  \item Includes the input for \texttt{Comments}
-  \item Includes a title
-  \item Revision history included for major revisions
-  \end{todolist}
-
-\item Follows writing checklist (full checklist provided in a separate document)
-  \begin{todolist}
-  \item \LaTeX{} points
-  \item Structure
-  \item Spelling, grammar, attention to detail
-  \item Avoid low information content phrases
-  \item Writing style
-  \item Use the provided \texttt{.gitignore} file
-  \item Hard-wrap at 80 characters per line
-  \end{todolist}
-
-\item Overall qualities of documentation
-  \begin{todolist}
-  \item Scope is clear
-  \item Document is abstract (for instance, it does not mention the programming
-    language (unless this is a true constraint) or the numerical algorithm
-    choice (unless the algorithm is the ``what'' rather than the ``how''))
-  \item Output of software is unambiguous
-  \item Inputs to software are unambiguous
-  \item Problem statement points to Drasil, if this is to be a project
-    implemented with Drasil
-  \item Document is simple (for instance, there is no need for a table of
-    contents)
-\end{todolist}
-
-\item Problem statement review issue is created correctly
-  \begin{todolist}
-  \item Issue includes a link the file to be reviewed, or the commit hash where
-    the latest version is found
-  \item Issue is assigned to \texttt{smiths}
-  \item Your user info on GitHub includes your name, since some GitHub ids do
-    not clearly show which student in the class is the owner of the id.
-\end{todolist}
-
+  \item EEG signals
+  \\ {\footnotesize (Dim: Channel No. x time samples( recording time/sampling frequency) ) ( $\mu$volt )}
+  \item Electrode locations
+  \\ {\footnotesize (Dim: Channel No.  x 3 coordinations}
+  \item Individual’s MRI (Magnetic resonance imaging)
+  \item The method (inverse solution technique) 
 \end{itemize}
+%Electroencephalogram signals
+
+\textbf{Output}: Activity of all sources inside the brain 
+\\
+{\footnotesize The activity of each voxel of the brain mesh grid in time (source time-course)
+\\
+(Dim: Number of sources x time samples (recording time/sampling frequency) ) ($\mu$volt )}
+\\*
+
+Electroencephalography (EEG), which is a method to record electrical activity of the brain, has a plethora of 
+applications such as decoding mental imageries used in brain-computer interfaces. One of the big open problems 
+in EEG signal processing is finding a good feature space after which we can apply machine learning and 
+classification methods to the data. The standard in the field is to start with the electrode space and then extract 
+features such as amplitude or latencies (time domain features), frequency power spectra (frequency features), 
+common spatial patterns (spatial features) etc. A novel approach that we would like to investigate is to first map 
+EEG signals from electrode space into spatial coordinates of the brain to achieve more useful features.
+\\
+
+These techniques are known as  ``source localization `` algorithms which can be applied to the signals recorded 
+from the scalp and locate the underlying active sources generating the activity sensed on the electrodes expected 
+to increase the signal to noise ratio. Additionally, mapping the activity from an n-channel space to fewer sources 
+reduces data dimensionality immensely, helps avoid overfitting and redundancy, leads to better human 
+interpretations and less computational cost with the simplification of models. Therefore, this scientific software will 
+implement several techniques to map EEG signals from electrode space to source space.
+
+
+%Comments by the instructor were provided in the following format:
+%
+%\wss{comment}
+%
+%Comments by the author were provided in the following format:
+%
+%\an{comment}
 
 \end{document}
