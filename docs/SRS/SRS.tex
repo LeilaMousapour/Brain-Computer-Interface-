@@ -660,7 +660,7 @@ likely change [LC], in which the respective assumption is used.
 \item[A\refstepcounter{assumpnum}\theassumpnum \label{A_CD}:]
 Each source is a current dipole [\tref{T_CurrentDipole}].
 \item[A\refstepcounter{assumpnum}\theassumpnum \label{A_BrainOnly}:]
-Sources of activity recorded in EEG are from the brain and there is no active source outside of the brain volume (meaning that we assume the eye movemnet and other muscle artifacts are rejected and only the activity from the brain is present in the EEG) [\tref{T_FP}, \tref{T_IP}].
+Sources of activity recorded in EEG are from the brain and there is no active source outside of the brain volume (meaning that we assume the eye movement and other muscle artifacts are rejected and only the activity from the brain is present in the EEG) [\tref{T_FP}, \tref{T_IP}].
 \item[A\refstepcounter{assumpnum}\theassumpnum \label{A_AllChan}:]
 Every current source contributes to ALL the channels [\tref{T_FP}, \tref{T_IP}].
 \item[A\refstepcounter{assumpnum}\theassumpnum \label{A_SP}:] The activity at each channel is a linear combination of ALL sources' activities (superposition of the sensed activity of all sources at that channel) (we base the forward problem modelling on this)  [\tref{T_FP}, \tref{T_IP}].
@@ -865,7 +865,7 @@ Symbol &$x$\\
 % \hline
   SI Units & $\mu$V \\
   \hline
-  Dimmension&$nChannel \times \frac{t}{f_s} $\\
+  Dimension&$nChannel \times \frac{t}{f_s} $\\
   \hline
   Description & 
                 EEG is the voltage recorded on the electrodes. Depending on the experiment and the system we use, the number of channels will be different (ranging from 5 to 256 (HDEEG)). Each electrode is recording a sampled signal with sampling frequency of $f_s$ during time $t$. 
@@ -1218,7 +1218,7 @@ Generally,  \progname{} shall be easy to be checked or tested. It should not cra
 
 \noindent \begin{itemize}
 
-\item[LC\refstepcounter{lcnum}\thelcnum\label{LC_meaningfulLabel}:] The headmodel will not be simplified any further to a single shell sphere model or similar models.
+\item[LC\refstepcounter{lcnum}\thelcnum\label{LC_meaningfulLabel}:] The head model will not be simplified any further to a single shell sphere model or similar models.
 
 \item[LC\refstepcounter{lcnum}\thelcnum\label{LC_meaningfulLabel}:] 3D estimation of electrode locations based on a 2D map of the electrodes will not be added to the software and the exact coordinations should be provided.
 
