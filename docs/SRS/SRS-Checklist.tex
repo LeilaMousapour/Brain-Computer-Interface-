@@ -16,8 +16,13 @@
 \usepackage{caption}
 \usepackage{pdflscape}
 \usepackage{afterpage}
+\usepackage{amsmath} % for 'bmatrix' environment
 
 \usepackage[round]{natbib}
+
+
+%\usepackage{biblatex} --> this is incompatible with natbib
+%\addbibresource{SRS.bib}
 
 %\usepackage{refcheck}
 
@@ -91,6 +96,8 @@
 
 \tableofcontents
 
+
+
 ~\newpage
 
 \section*{Revision History}
@@ -127,7 +134,7 @@ description of the unit and the SI name.
     hz & Frequency	& herts\\
     \si{\second} & time & second\\
     \si{\volt} & voltage & volt\\
-    \si{\watt} & power & watt (W = \si{\joule\per\second})\\
+    \si{\dB} & power & Decibel \\
     \bottomrule
   \end{tabular}
   %	\caption{Provide a caption}
@@ -269,11 +276,11 @@ description of the unit and the SI name.
 %  independently verify/derive every statement made.}
 
 \section{Introduction}
-Electroencephalography (EEG), which is a method to record electrical activity of the brain, has a plethora of applications such as decoding mental imageries used in brain-computer interfaces (BCI). One of the big open problems in EEG signal processing is finding a good feature space after which we can apply machine learning and classification methods to the data. The standard in the field is to start with the electrode space and then extract features such as amplitude or latencies (time domain features), frequency power spectra (frequency features), common spatial patterns (spatial features) etc. A novel approach that we would like to investigate is to first map EEG signals from electrode space into spatial coordinates of the brain to achieve more useful features.\\
+Electroencephalography (EEG), which is a method to record electrical activity of the brain, has a plethora of applications such as decoding mental imageries used in brain-computer interfaces (BCI). One of the big open problems in EEG signal processing is finding a good feature space after which we can apply machine learning and classification methods to the data. The standard in the field is to start with the electrode space and then extract features such as amplitude or latencies (time domain features), frequency power spectra (frequency features), common spatial patterns (spatial features) etc. A novel approach that we would like to investigate is to first map EEG signals from electrode space into spatial coordinates of the brain to achieve more useful features \cite{michel_eeg_2019}.\\
 
-These techniques are known as “source localization “ algorithms which can be applied to the signals recorded from the scalp and locate the underlying active sources generating the activity sensed on the electrodes expected to increase the signal to noise ratio. Additionally, mapping the activity from an n-channel space to fewer sources reduces data dimensionality immensely, helps avoid overfitting and redundancy, leads to better human interpretations and less computational cost with the simplification of models. Therefore, this scientific software will implement several techniques to map EEG signals from electrode space to source space.\\
+These techniques are known as “source localization “ algorithms which can be applied to the signals recorded from the scalp and locate the underlying active sources generating the activity sensed on the electrodes expected to increase the signal to noise ratio. Additionally, mapping the activity from an n-channel space to fewer sources reduces data dimensionality immensely, helps avoid overfitting and redundancy, leads to better human interpretations and less computational cost with the simplification of models. Therefore, this scientific software aims to implement several techniques to map EEG signals from electrode space to source space.\\
 
-In this introduction, first the purpose of the SRS document is discussed. Afterwards, the scope of requirements for the software are stated from the big picture view. Additionally, the skills and knowledge of the readers of this document are clarified. This section will end by illustrating a road map of the whole SRS document.
+In this introduction, first the purpose of the SRS document is discussed. Afterwards, the scope of requirements for the software are stated from the big picture view. Additionally, the required skills and knowledge for the readers of this document are clarified. This section will end by illustrating a road map of the whole SRS document.
 
 %  SRS.his section summarizes the skills and knowledge of the readers of the
 %  SRS.Finally, 
@@ -285,9 +292,9 @@ In this introduction, first the purpose of the SRS document is discussed. Afterw
 %expect in the Introduction section.}
 
 \subsection{Purpose of Document}
-This document describes the features and behaviour of the EEGSourceLocalizer software application. It includes a variety of elements that attempts to define the intended functionality required by the customer. The purpose of the document is to provide detailed requirements of the software and to provide planning for the design stage. \\
+This main purpose of this document is to explain the modelling of an EEG source localization system and describes the features and behaviours of the \progname{}  software application. It includes a variety of elements that attempts to define the intended functionality required by the user. Thus, this document provides detailed requirements of the software which will be used in planing for design stage. Therefore, this document is intended to be used as a reference to provide ad hoc access to all information necessary to understand and verify the model. \
 
-Goals, assumptions, theoretical models, definitions, and other model derivation information are explained, allowing the reader to fully understand and verify the purpose and scientific basis of EEGSourceLocalizer. This SRS will remain abstract, describing what problem is being solved, but not how to solve it. This document will be used as a starting point for subsequent development phases, including writing the design specification and the software verification and validation plan.
+Goals, assumptions, theoretical models, definitions, and other model derivation information are explained, allowing the reader to fully understand and verify the purpose and scientific basis of EEGSourceLocalizer. This SRS will remain abstract, describing what problem is being solved, but not how to solve it. This document, which fits in a series of documents that follow the so-called waterfall model, will be used as a starting point for subsequent development phases, including writing the design specification and the software verification and validation plan \cite{Parnas1978}.
 
 %\plt{This section summarizes the purpose of the SRS document.  It does not focus
 %  on the problem itself.  The problem is described in the ``Problem
@@ -301,7 +308,7 @@ Goals, assumptions, theoretical models, definitions, and other model derivation 
 
 \subsection{Scope of Requirements} 
 
-Source localization is a very general problem which can be in raised in various contexts such as telecommunication signals, brain signals etc. Also, there are numerous algorithms with different set of assumptions to solve this problem. However, the scope of this project is limited to source localization of EEG signals and it will not be applicable to other neuro imaging modalities such as magnetoencephalggram (MEG), fNIRS etc. Moreover, this software will only use 2 different algorithms of source localization: Beamforming and sLORETA and will not cover other approaches.
+Source localization is a very general problem which can be in raised in various contexts such as telecommunication signals, sound signals, brain signals etc. Also, there are numerous algorithms with different set of assumptions to solve this problem. However, the scope of the requirements for this project is limited to source localization of EEG signals and it will not be applicable to other neuroimaging modalities such as magnetoencephalggram (MEG), fNIRS etc. Moreover, this software will only use 2 different algorithms of source localization: Beamforming (LCMV) and sLORETA and will not cover other approaches.
 
 %\plt{Modelling the real world requires simplification.  The full complexity of
 %  the actual physics, chemistry, biology is too much for existing models, and
@@ -320,7 +327,7 @@ Source localization is a very general problem which can be in raised in various 
 
 \subsection{Characteristics of Intended Reader} \label{sec_IntendedReader}
 
-The intended readers are the people who will read, review and maintain the SRS.  They are the people that will conceivably design the software that is intended to meet the requirements. Therefore, they are expected to have a general understanding of EEG neuroimaging technique and EEG signal processing. Also, a very good knowledge of linear algebra and matrix manipulation is required.
+The intended readers are the people who will read, review and maintain the SRS.  They are the people that will conceivably design the software that is intended to meet the requirements. Therefore, they are expected to have a general understanding of EEG neuroimaging technique and EEG signal processing. Also, a very good knowledge of linear algebra and matrix manipulation is required to understand the modelling of the SL problem. 
 
 %\plt{This section summarizes the skills and knowledge of the readers of the
 %  SRS.  It does NOT have the same purpose as the ``User Characteristics''
@@ -339,18 +346,16 @@ The intended readers are the people who will read, review and maintain the SRS. 
 
 \subsection{Organization of Document}
 
-The document follows the organizational scheme laid out by Smith \textit{et al.}
-\cite{SmithAndLai2005, smith_requirements_2007}, starting with general reference
+The document follows the organizational scheme for an SRS for scientific computing software  laid out by Smith \textit{et al.}
+\cite{SmithAndLai2005}, starting with general reference
 material for the reader. The introduction of the document details the purpose of
-the document and intended reader, and is followed by the General System
-Description. The Specific System Description reduces the problem under
-consideration to a set of clearly defined definitions and models. The
+the document and qualifications of the intended reader, and is followed by the General System Description. The Specific System Description elaborates on the problem and defines needed terminology. Afterwards, the goal statements  of the \progname{} are listed which are refined to the theoretical models, and the theoretical models to the instance models to explain to solution characteristics. The
 Requirements section of the document clearly outlines both the Functional and
 Non-functional Requirements that the software must comply with. Finally, the
 document contains a list of Likely Changes to the software and Traceability
 matrices and graphs.
 
-
+\newpage
 %\plt{This section provides a roadmap of the SRS document.  It will help the
 %  reader orient themselves.  It will provide direction that will help them
 %  select which sections they want to read, and in what order.  This section will
@@ -375,7 +380,7 @@ characteristics and lists the system constraints.
 \subsection{System Context}
 
 
-Figure 1 shows the system context which is an abstract view of the software. A circle represents an external entity outside the software, the user in this case. A rectangle represents the software system itself (EEGSourceLocalizer). Arrows are used to show the data flow between the system and its environment including the main inputs and outputs. The responsibilities of the user and the system are as follows:
+Figure \ref{Fig_SystemContext} shows the system context which is an abstract view of the software. A circle represents an external entity outside the software, the user in this case. A rectangle represents the software system itself (EEGSourceLocalizer). Arrows are used to show the data flow between the system and its environment including the main inputs and outputs. The responsibilities of the user and the system are as follows:
 
 %\plt{Your system context will include a figure that shows the abstract view of
 %  the software.  Often in a scientific context, the program can be viewed
@@ -404,21 +409,22 @@ Figure 1 shows the system context which is an abstract view of the software. A c
 \begin{itemize}
 \item User Responsibilities:
 \begin{itemize} 
-\item  Clean and preprocess the EEG data
-\item  Provide all the input data to the system (including EEG recording)
-\item  Given two or more options by the system, decide to use which SL method
+\item  Clean and preprocess the EEG data (remove artifacts as it adversely affects the SL accuracy)
+\item  Provide all the input data to the system (including EEG recording and electrode location file) 
+\item  Given two or more options by the system, decide which SL method to use
 \end{itemize}
 
 \item \progname{} Responsibilities:
 \begin{itemize}
 \item Detect data type mismatch or missing inputs
+\item Determine if the inputs satisfy the required physical and software constraints
 \item Calculate and plot the required outputs
 \end{itemize}
 \end{itemize}
 
 \subsection{User Characteristics} \label{SecUserCharacteristics}
 
-The user is expected to be familiar with EEG cleaning and preprocessing to provide the software with cleaned data such as artifact removal as SL techniques are very sensitive to the data quality. Also, the user should have the knowledge about the different techniques that are provided as SL options in this software to be able to set the configurations of the methods. For this purpose, they should have an understanding of signal processing and linear algebra. Additionally, the end user is preferred to have a basic cognitive neuroscience knowledge so that they have a rough idea where the active sources during the recorded task should be expected. 
+The user is expected to be familiar with EEG cleaning and preprocessing to provide the software with cleaned data such as artifact removal as SL techniques are very sensitive to the data quality. Also, the user should have the knowledge about the different techniques that are provided as SL options in this software to be able to set the configurations of the methods. For this purpose, they should have an understanding of signal processing and linear algebra. Additionally, the end user is preferred to have a basic cognitive neuroscience knowledge so that they have a rough idea where  to expect the active sources during the task performed by the participant.
 
 %\plt{This section summarizes the knowledge/skills expected of the user.
 %  Measuring usability, which is often a required non-function requirement,
@@ -442,6 +448,7 @@ There is no system constraints for this project.
 %  included if they are truly required. In the context of CAS 741, you often will
 %  may not have any system constraints.}
 
+\newpage 
 \section{Specific System Description}
 
 This section first presents the problem description, which gives a high-level
@@ -453,8 +460,7 @@ the instance models.
 
 \subsection{Problem Description} \label{Sec_pd}
 
-During rest state or while performing any physical or mental task, there are many activities occurring inside the brain which we can record a superficial effect of them sensed on the EEG electrodes. However, different parts of the brain have different functionalities and are more active while performing specific tasks.
-\progname{} is intended to find the location and activity pattern of the underlying sources in the brain which are responsible for the EEG signal that we record from the scalp.
+During the rest state or while performing any physical or mental task, there are many activities occurring inside the brain which we can record a superficial effect of them sensed on the scalp via EEG electrodes. However, different parts of the brain have different functionalities and their level and pattern of activity varies while performing specific tasks. \progname{} is intended to estimate the activity of the underlying sources responsible for the electric potentials record from the scalp.
 %\plt{What problem does your program solve?
 %The description here should be in the problem space, not the solution space.}
 
@@ -476,6 +482,8 @@ easier to correctly understand the requirements:
 
 \item MRI: Magnetic resonance imaging (MRI) is a medical imaging technique that uses a magnetic field and computer-generated radio waves to create detailed images of the organs and tissues in your body.
 
+\item Tissue conductivity: A constant describing the electrical conductivity of different head tissues.  While modelling the head, we have to consider the electrical conductivity of the different head tissues (brain, skull, scalp) are different. 
+
 \item Coordinate system: in geometry, a coordinate system is a system that uses one or more numbers, or coordinates, to uniquely determine the position of the points or other geometric elements on a manifold such as Euclidean space.
 
 \item Covariance: In probability theory and statistics, a covariance matrix is a square matrix giving the covariance between each pair of elements of a given random vector.
@@ -490,9 +498,9 @@ easier to correctly understand the requirements:
 
 \subsubsection{Physical System Description} \label{sec_phySystDescrip}
 
-The purpose of this section is to clearly and unambiguously state the physical system that is to be modelled. The complete physical system consist of two main components: the head and the EEG electrodes set up on the the scalp. Each of these 2 have several elements. \\
+The purpose of this section is to clearly and unambiguously state the physical system that is to be modelled. The complete physical system consist of two main components: the head and the EEG equipments (electrodes) placed on the the scalp. Each of these 2 have several elements. \\
 
-EEG equipment consist of a number of electrodes (could be anything between 6 to 256 electrodes) placed on predefined locations. These locations could be specified by a cap or by sectioning the head. Also, head can be physically modeled with 3 tissues with different conductivity: brain, skull and scalp. \\
+EEG equipment consist of a number of electrodes (could be anything between 6 to 256 electrodes) placed on predefined locations. These locations could be specified by a cap or by sectioning the head. Also, head can be physically modeled with 3 tissues with different conductivity: brain, skull and scalp.  \\
 
 %\plt{The purpose of this section is to clearly and unambiguously state the
 %  physical system that is to be modelled. Effective problem solving requires a
@@ -507,17 +515,13 @@ EEG equipment consist of a number of electrodes (could be anything between 6 to 
 %  interactions between the elements and their physical environment; ii) the
 %  interactions between elements; and, iii) the initial or boundary conditions.}
 
-The physical system of \progname{}, as shown in Figure~?,
+The physical system of \progname{}, as shown in Figure \ref{Fig_PhysicalSystem} ,
 includes the following elements:
 
 \begin{itemize}
 
 \item[PS1:] EEG recording electrodes
-\item[PS2:] Electrical activity sensed by the electrodes (EEG signal)
-\item[PS3:] Exact location of the electrodes (coordination)
-\item[PS4:] Head (Scull, scalp and brain)
-\item[PS5:] Head MRI
-\item[PS6:] Brain electrical activity
+\item[PS2:] Head (Scull, scalp and brain)
 
 \end{itemize}
 
@@ -526,8 +530,8 @@ includes the following elements:
 \begin{figure}[h!]
 \begin{center}
  \includegraphics[width=0.6\textwidth]{EEG-recording}
-\caption{System Context}
-\label{Fig_SystemContext} 
+\caption{Physical System Schematic}
+\label{Fig_PhysicalSystem}
 \end{center}
 \end{figure}
 
@@ -555,14 +559,13 @@ includes the following elements:
 %  amount of technical language.  They should be understandable by non-domain
 %  experts.}
 
-\noindent Given the inputs the goal statements are:
+\noindent Given the inputs including the recorded EEG signal, the location of electrodes in appropriate coordination system, the head MRI and the choice of SL algorithm, the goal statements are:
 
 \begin{itemize}
 
-\item[GS\refstepcounter{goalnum}\thegoalnum \label{G_meaningfulLabel}:] Locate the active sources and their orientation
-\item[GS\refstepcounter{goalnum}\thegoalnum \label{G_meaningfulLabel}:] Estimate the sources activity time course (time series)
-\item[GS\refstepcounter{goalnum}\thegoalnum \label{G_meaningfulLabel}:] Estimate the average source power (over time)
-\item[GS\refstepcounter{goalnum}\thegoalnum \label{G_meaningfulLabel}:] Plot the sources on a sliced MRI and 3D brain model 
+\item[GS\refstepcounter{goalnum}\thegoalnum \label{G_meaningfulLabel}:] Create a source model by segmenting the brain volume or the cortical surface into voxels (brain mesh grid)\item[GS\refstepcounter{goalnum}\thegoalnum \label{G_meaningfulLabel}:] Estimate the sources activity in time (source time course) for every source point in the generated source model
+\item[GS\refstepcounter{goalnum}\thegoalnum \label{G_meaningfulLabel}:] Estimate the average source power (over time) for all source points
+\item[GS\refstepcounter{goalnum}\thegoalnum \label{G_meaningfulLabel}:] Plot the sources on a sliced MRI or 3D brain model 
 
 
 %\plt{One
@@ -574,6 +577,18 @@ includes the following elements:
 \end{itemize}
 
 \subsection{Solution Characteristics Specification}
+This section specifies the information in the solution domain of the system
+to be developed and is intended to express what is required in
+such a way that analysts and stakeholders get a clear picture, and the
+latter will accept it. The purpose of this section is to reduce the problem into one expressed in mathematical terms.\\
+
+This section presents the solution characteristics by successively refining
+models. It starts with the abstract/general Theoretical Models (TMs) and
+refines them to the concrete/specific Instance Models (IMs). All of these
+refinements can potentially use Assumptions (A) and Data Definitions (DD). DDs are not refined; they are just used. GDs and IMs are derived, or refined, from other
+models. DDs are not derived; they are just given. TMs are also just given, but
+they are refined, not used.  Figure \ref{Fig_SolChar} shows the relation between these subsections\\
+
 
 %\plt{This section specifies the information in the solution domain of the system
 %  to be developed. This section is intended to express what is required in
@@ -616,15 +631,13 @@ includes the following elements:
 %  the following figure.  In this diagram ``may ref'' has the same role as
 %  ``uses'' above.  The figure adds ``Likely Changes,'' which are able to
 %  reference (use) Assumptions.}
-%
+
 \begin{figure}[H]
   \includegraphics[scale=0.9]{RelationsBetweenTM_GD_IM_DD_A.pdf}
+  \caption{Solution Characteristics Specification Subsections}
+\label{Fig_SolChar}
 \end{figure}
 
-The instance models that govern \progname{} are presented in
-Subsection~\ref{sec_instance}.  The information to understand the meaning of the
-instance models and their derivation is also presented, so that the instance
-models can be verified.
 
 \subsubsection{Assumptions} \label{sec_assumpt}
 
@@ -639,16 +652,21 @@ models can be verified.
 This section simplifies the original problem and helps in developing the
 theoretical model by filling in the missing information for the physical
 system. The numbers given in the square brackets refer to the theoretical model
-[T], general definition [GD], data definition [DD], instance model [IM], or
+[T], data definition [DD], instance model [IM], or
 likely change [LC], in which the respective assumption is used.
 
 \begin{itemize}
 
-\item[A\refstepcounter{assumpnum}\theassumpnum \label{A_meaningfulLabel}:]
-Each source contributes to all the channels 
-\item[A\refstepcounter{assumpnum}\theassumpnum \label{A_meaningfulLabel}:] Each source have different visibility on each channel (defines the contribution of each source at each channel) 
-\item[A\refstepcounter{assumpnum}\theassumpnum \label{A_meaningfulLabel}:] The activity on each channel is the linear combination of all source activities (we base our source modeling on this) 
-\item[A\refstepcounter{assumpnum}\theassumpnum \label{A_meaningfulLabel}:]Sufficient length of stationary data (only related to the function of interest) to get a good estimate of covariance matrix 
+\item[A\refstepcounter{assumpnum}\theassumpnum \label{A_CD}:]
+Each source is a current dipole [\tref{T_CurrentDipole}].
+\item[A\refstepcounter{assumpnum}\theassumpnum \label{A_BrainOnly}:]
+Sources of activity recorded in EEG are from the brain and there is no active source outside of the brain volume (meaning that we assume the eye movemnet and other muscle artifacts are rejected and only the activity from the brain is present in the EEG) [\tref{T_FP}, \tref{T_IP}].
+\item[A\refstepcounter{assumpnum}\theassumpnum \label{A_AllChan}:]
+Every current source contributes to ALL the channels [\tref{T_FP}, \tref{T_IP}].
+\item[A\refstepcounter{assumpnum}\theassumpnum \label{A_SP}:] The activity at each channel is a linear combination of ALL sources' activities (superposition of the sensed activity of all sources at that channel) (we base the forward problem modelling on this)  [\tref{T_FP}, \tref{T_IP}].
+\item[A\refstepcounter{assumpnum}\theassumpnum \label{A_SufData}:]Sufficient length of stationary data (only related to the function of interest) to get a good estimate of covariance matrix [\tref{T_IP}].
+\item[A\refstepcounter{assumpnum}\theassumpnum \label{A_TC}:] The tissue conductivity is constant across each tissue type  [\iref{IM_HM}].
+\item[A\refstepcounter{assumpnum}\theassumpnum \label{A_alg}:]  This software will only implement LCMV and sLORETA [\iref{IM_LCMV}].
 
 %  \plt{Short description of each assumption.  Each assumption
 %    should have a meaningful label.  Use cross-references to identify the
@@ -658,6 +676,7 @@ Each source contributes to all the channels
 
 \end{itemize}
 
+\newpage
 \subsubsection{Theoretical Models}\label{sec_theoretical}
 
 %\plt{Theoretical models are sets of abstract mathematical equations or axioms
@@ -676,7 +695,7 @@ This section focuses on the general equations and laws that \progname{} is based
 \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
   \hline
   \rowcolor[gray]{0.9}
-  Number& T\refstepcounter{theorynum}\thetheorynum \label{T_COE}\\
+  Number& T\refstepcounter{theorynum}\thetheorynum \label{T_CurrentDipole}\\
   \hline
   Label&\bf Current Dipole\\
   \hline
@@ -684,13 +703,13 @@ This section focuses on the general equations and laws that \progname{} is based
   \hline
   Description & 
 	 The electrical activity inside the brain can be modeled as a current dipole. This dipole provides good approximation for a small source viewed from a relatively large distance, as the far field of a realistic source is mainly dipolar.\\ 
-	& The current dipole consists of the current source and the sink separated by distance $p$ with an equal amount of current to be injected or removed. The magnitude and orientation of dipole are characterized by the dipole moment $d$ vector, which is pointing from the source to the sink in the figure. Hence, the magnitude of the dipole is $|d|= \mathbf{I} p$, where $p$ is the distance between the positive and negative poles, respectively. $n'$ is the unit vector defining the direction from the source to the $d$ sink. However, in the Cartesian coordinate system, the dipole can be represented by $x ,y, z$ unit vectors.\\
+	& The current dipole consists of the current source and the sink separated by distance $p$ with an equal amount of current to be injected or removed. The magnitude and orientation of dipole are characterized by the dipole moment $d$ vector, which is pointing from the source to the sink in the figure. Hence, the magnitude of the dipole is $|d|= \mathbf{I} p$, where $p$ is the distance between the positive and negative poles, respectively. $n'$ is the unit vector defining the direction from the source to the $d$ sink. However, in the Cartesian coordinate system, the dipole can be represented by $x ,y, z$ unit vectors (\aref{A_CD}).\\
   \hline
   Source &
            Jatoi, M. A. (2019). Brain Source Localization Using EEG Signal Analysis. CRC Press.\\
   % The above web link should be replaced with a proper citation to a publication
   \hline
-  Ref.\ By & \dref{ROCT}\\
+  Ref.\ By & \iref{IM_LF}\\
   \hline
 \end{tabular}
 \end{minipage}\\
@@ -704,7 +723,7 @@ This section focuses on the general equations and laws that \progname{} is based
 \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
   \hline
   \rowcolor[gray]{0.9}
-  Number& T\refstepcounter{theorynum}\thetheorynum \label{T_COE}\\
+  Number& T\refstepcounter{theorynum}\thetheorynum \label{T_FP}\\
   \hline
   Label&\bf Forward Problem/Model\\
   \hline
@@ -712,13 +731,13 @@ This section focuses on the general equations and laws that \progname{} is based
   \hline
   Description & 
                 The forward problem is concerned with the computation of scalp potentials for a specific set of neural current sources. Meaning, if we know the active sources in the brain, what would be the EEG we record on the scalp. Hence, it needs to model the head that is used for calculation of scalp potentials.\\
-              & Let  $x$ be an $N \times 1$ vector composed of the potentials measured at the electrode sites at a given instant in time associated with a single dipole source. If this source has location represented by the $3 \times1$ vector $\mathbf q$, then $x = \mathbf{H(q) m(q)}$ where the elements of vector $\mathbf{m(q)}$ are $x, y, z$ components of the dipole moment at an instant in time and the column of $N \times 3$ transfer matrix $\mathbf H(q)$ represent solution to the forward problem. The medium is linear so the potential at the scalp is the superposition of the potentials from many active neurons. Suppose $x$ is composed of the potentials due to $L$ active dipole sources at locations $\mathbf q_i$ and noise.\\
+              & Let  $x$ be an $N \times 1$ vector composed of the potentials measured at the electrode sites at a given instant in time associated with a single dipole source. If this source has location represented by the $3 \times1$ vector $\mathbf q$, then $x = \mathbf{H(q) m(q)}$ where the elements of vector $\mathbf{m(q)}$ are $x, y, z$ components of the dipole moment at an instant in time and the column of $N \times 3$ transfer matrix $\mathbf H(q)$ represent solution to the forward problem. The medium is linear so the potential at the scalp is the superposition of the potentials from many active neurons. Suppose $x$ is composed of the potentials due to $L$ active dipole sources at locations $\mathbf q_i$ and noise (\aref{A_BrainOnly}, \aref{A_AllChan}, \aref{A_SP}).\\
   \hline
   Source &
            Van Veen BD, van Drongelen W, Yuchtman M, Suzuki A. Localization of brain electrical activity via linearly constrained minimum variance spatial filtering. IEEE Trans Biomed Eng. 1997 \\
   % The above web link should be replaced with a proper citation to a publication
   \hline
-  Ref.\ By & \dref{ROCT}\\
+  Ref.\ By & \iref{IM_LF} and \iref{IM_HM}\\
   \hline
 \end{tabular}
 \end{minipage}\\
@@ -732,21 +751,21 @@ This section focuses on the general equations and laws that \progname{} is based
 \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
   \hline
   \rowcolor[gray]{0.9}
-  Number& T\refstepcounter{theorynum}\thetheorynum \label{T_COE}\\
+  Number& T\refstepcounter{theorynum}\thetheorynum \label{T_IP}\\
   \hline
   Label&\bf Inverse Problem/Model\\
   \hline
   Equation&  $Var(\mathbf q_i)$ = $tr{[\mathbf H^T(q_i) C^{-1}(x) H(q_i)]^{-1}}$\\
   \hline
   Description & 
-                Inverse problem intends to find the source $q_i$ given the activity $x$ on the scalp and is the problem of interest in this project. This problem is known as source localization or EEG inverse problem as the data (potentials) are given and one has to design the model from the available data. Mathematically, the EEG inverse problem is typically an optimization problem. The EEG inverse problem is an ill-posed optimization problem as unknown (sources) outnumbers the known (sensors). LCMV algorithm, which is one of the methods this software implements, gives an estimated variance or strength of the activity of the moment at location $q_i$ which is represented in the equation above.
+                Inverse problem intends to find the source $q_i$ given the activity $x$ on the scalp and is the problem of interest in this project. This problem is known as source localization or EEG inverse problem as the data (potentials) are given and one has to design the model from the available data. Mathematically, the EEG inverse problem is typically an optimization problem. The EEG inverse problem is an ill-posed optimization problem as unknown (sources) outnumbers the known (sensors). LCMV algorithm, which is one of the methods this software implements, gives an estimated variance or strength of the activity of the moment at location $q_i$ which is represented in the equation above (\aref{A_BrainOnly}, \aref{A_AllChan}, \aref{A_SP}). 
 \\
   \hline
   Source &
             Van Veen BD, van Drongelen W, Yuchtman M, Suzuki A. Localization of brain electrical activity via linearly constrained minimum variance spatial filtering. IEEE Trans Biomed Eng. 1997\\
   % The above web link should be replaced with a proper citation to a publication
   \hline
-  Ref.\ By & \dref{ROCT}\\
+  Ref.\ By & \iref{IM_LCMV}\\
   \hline
 \end{tabular}
 \end{minipage}\\
@@ -811,7 +830,7 @@ This section focuses on the general equations and laws that \progname{} is based
 %  description field.}
 %\plt{Derivations are important for justifying a given GD.  You want it to be
 %  clear where the equation came from.}
-
+\newpage
 \subsubsection{Data Definitions}\label{sec_datadef}
 
 %\plt{The Data Definitions are definitions of symbols and equations that are
@@ -836,7 +855,7 @@ models. The dimension of each quantity is also given.
 \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
 \hline
 \rowcolor[gray]{0.9}
-Number& DD\refstepcounter{datadefnum}\thedatadefnum \label{FluxCoil}\\
+Number& DD\refstepcounter{datadefnum}\thedatadefnum \label{EEG}\\
 \hline
 Label& \bf Electroencephalogram (EEG)\\
 \hline
@@ -854,7 +873,7 @@ Symbol &$x$\\
   \hline
   Sources& Niedermeyer E.; da Silva F.L. (2004). Electroencephalography: Basic Principles, Clinical Applications, and Related Fields. Lippincott Williams \& Wilkins.\\
   \hline
-  Ref.\ By & \iref{ewat}\\
+  Ref.\ By & \iref{IM_LCMV}\\
   \hline
 \end{tabular}
 \end{minipage}\\
@@ -867,7 +886,7 @@ Symbol &$x$\\
 \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
 \hline
 \rowcolor[gray]{0.9}
-Number& DD\refstepcounter{datadefnum}\thedatadefnum \label{FluxCoil}\\
+Number& DD\refstepcounter{datadefnum}\thedatadefnum \label{MRI}\\
 \hline
 Label& \bf Magnetic Resonance Imaging (MRI)\\
 \hline
@@ -898,7 +917,7 @@ Symbol &$MRI$\\
 \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
 \hline
 \rowcolor[gray]{0.9}
-Number& DD\refstepcounter{datadefnum}\thedatadefnum \label{FluxCoil}\\
+Number& DD\refstepcounter{datadefnum}\thedatadefnum \label{Loc}\\
 \hline
 Label& \bf Electrode location\\
 \hline
@@ -933,7 +952,7 @@ Symbol &$loc_i(x,y,z)$\\
 This section transforms the problem defined in Section~\ref{Sec_pd} into 
 one which is expressed in mathematical terms. It uses concrete symbols defined 
 in Section~\ref{sec_datadef} to replace the abstract symbols in the models 
-identified in Sections~\ref{sec_theoretical} and~\ref{sec_gendef}.
+identified in Sections~\ref{sec_theoretical}.
 
 %The goals \plt{reference your goals} are solved by \plt{reference your instance
 %  models}.  \plt{other details, with cross-references where appropriate.}
@@ -952,26 +971,25 @@ identified in Sections~\ref{sec_theoretical} and~\ref{sec_gendef}.
 \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
   \hline
   \rowcolor[gray]{0.9}
-  Number& IM\refstepcounter{instnum}\theinstnum \label{HM}\\
+  Number& IM\refstepcounter{instnum}\theinstnum \label{IM_HM}\\
   \hline
   Label& \bf  Head model (Volume conduction model) \\
   \hline
-  Input& MRI and the location of landmarks (Fiducial points)\\
+  Input& MRI and the location of landmarks (Fiducial points) [\ddref{MRI}, \ddref{Loc}]\\
   & The input is constrained so that $MRI_{pixel} \leq  255$\\
   & Also the MRI should be in the same coordinate system as the electrodes.\\
   \hline
-  Output& The description of the head geometry (3 3D segmented surfaces (into triangles) on the borders of scalp, skull and brain.)\\
-  & And tissue connectivity \\
+  Output& The description of the head geometry (Three 3D segmented surfaces (into triangles) on the borders of scalp, skull and brain.)\\
+  & And tissue connectivity related to the tissue between each two surface\\
 \\
   \hline
   Description&
-  	A volume conduction model describes how currents flow through the tissue. For creating a head model, we first need to have an MRI image of the person's head which have the head's anatomy and the coordinate system the anatomy is represented in. First, we align the MRI to the head coordinate system by a transfer function mapping the fiducial points of the MRI into the electrodes'. Finally, the voxels of the anatomical MRI are segmented/separated into 3 different tissue types: scalp, skull, brain using Boundary Element Method (BEM). Each of these tissues have a conductivity constant.
-  (\aref{A_OpRange}, \aref{A_Pressure}).
+  	A volume conduction model describes how currents flow through the tissue. For creating a head model, we first need to have an MRI image of the person's head which have the head's anatomy and the coordinate system the anatomy is represented in. First, we align the MRI to the head coordinate system by a transfer function mapping the fiducial points of the MRI into the electrodes'. Finally, the anatomical MRI is segmented/separated into 3 different tissue types: scalp, skull, brain using Boundary Element Method (BEM). Each of these tissues have a conductivity constant [\aref{A_TC}].
   \\
   \hline
   Sources& Jatoi, M. A. (2019). Brain Source Localization Using EEG Signal Analysis. CRC Press \\
   \hline
-  Ref.\ By & \iref{LF}\\
+  Ref.\ By & \iref{IM_LF}\\
   \hline
 \end{tabular}
 \end{minipage}\\
@@ -986,27 +1004,36 @@ identified in Sections~\ref{sec_theoretical} and~\ref{sec_gendef}.
 \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
   \hline
   \rowcolor[gray]{0.9}
-  Number& IM\refstepcounter{instnum}\theinstnum \label{LF}\\
+  Number& IM\refstepcounter{instnum}\theinstnum \label{IM_LF}\\
   \hline
   Label& \bf Lead filed (forward model)\\
   \hline
-  Input& Electrode locations and head model from \iref{HM}\\
-  & The input is constrained so that the electrodes should be aligned on the head model (\iref{HM})\\
+  Input& Electrode locations from \ddref{Loc} and head model from \iref{IM_HM}\\
+  & The input is constrained so that the electrodes should be aligned on the head model (\iref{IM_HM}) - A visual inspection and a transfer matrix is needed to transfer the locations\\
   & Also, only the main electrodes should be feed as input here (remove all the externals and fiducial points)\\
   \hline
   Output&
   	source model (the 3D brain grid - each voxel is a dipole/source point)\\
-	& lead field 
-   from \iref{epcm} \\
+  	& Leadfiled matrix
+\[
+K = \begin{bmatrix} 
+    K_{1,1} & K_{1,2} & \dots & K_{1,N_v} \\
+    \vdots & \ddots & \\
+    K_{N_e, 1} &       \dots &  & K_{N_e, N_v}
+    \end{bmatrix}
+\]
+  	
+	Where $K_{i,l} = (k^x_{i,l}, k^y_{i,l}, k^z_{i,l})$
+is the scalp electric potential at the $i$th electrode, due to a unit strength X-oriented dipole at the $l$th voxel/source\\
   \hline
   Description&
   	The lead field consists of the forward model for all the dipole locations on a 3D source model. All the channels should be included in the forward model calculation. The forward solution is expressed as the lead field matrix ($ nChannel \times sources$) where each column corresponds with the potential of field distribution on all sensors for each orientation of the dipole.  For this purpose, we first have to discretize the brain volume into a regular grid of dipoles (voxels). Then, for each grid point, the lead field matrix is calculated. 
-   (\aref{A_OpRange}, \aref{A_Pressure}).
+   (\aref{A_BrainOnly}, \aref{A_AllChan}).
   \\
   \hline
   Sources& Jatoi, M. A. (2019). Brain Source Localization Using EEG Signal Analysis. CRC Press \\
   \hline
-  Ref.\ By & \iref{epcm}\\
+  Ref.\ By & \iref{IM_LCMV}\\
   \hline
 \end{tabular}
 \end{minipage}\\
@@ -1020,11 +1047,11 @@ identified in Sections~\ref{sec_theoretical} and~\ref{sec_gendef}.
 \begin{tabular}{| p{\colAwidth} | p{\colBwidth}|}
   \hline
   \rowcolor[gray]{0.9}
-  Number& IM\refstepcounter{instnum}\theinstnum \label{ewat}\\
+  Number& IM\refstepcounter{instnum}\theinstnum \label{IM_LCMV}\\
   \hline
-  Label& \bf Beamformer (inverse solution)\\
+  Label& \bf Beamformer (inverse solution1)\\
   \hline
-  Input& EEG data, lead filed, head model, MRI and the method\\
+  Input& EEG data (\ddref{EEG}), lead filed matrix (\iref{IM_LF}), head model (\iref{IM_HM}), MRI (\ddref{MRI}) and the selected method (\aref{A_SufData})\\
   & The input is constrained so that $F(EEG) \leq 100$ (data should be low-pass filtered)\\
   & Also, the covariance of the EEG data should not be rank deficient : $rank(Cov_{EEG}) \geq Maxlength(Cov_{EEG})$\\
   \hline
@@ -1033,12 +1060,12 @@ identified in Sections~\ref{sec_theoretical} and~\ref{sec_gendef}.
   &Source activity map on an slices MRI based on source power \\
   \hline
   Description&
-  The activity of the sources are calculated in this step based on the decided method (LCMV or sLORETA).  (\aref{A_OpRange}, \aref{A_Pressure}).
+  The activity of the sources are calculated in this step based on the decided method (LCMV or sLORETA).
   \\
   \hline
   Sources& Jatoi, M. A. (2019). Brain Source Localization Using EEG Signal Analysis. CRC Press  \\
-  \hline
-  Ref.\ By & \iref{epcm}\\
+%  \hline
+%  Ref.\ By & \iref{epcm}\\
   \hline
 \end{tabular}
 \end{minipage}\\
@@ -1075,10 +1102,10 @@ Table~\ref{TblSpecParams}.
 \noindent \begin{longtable*}{l l l l c} 
   \toprule
   \textbf{Var} & \textbf{Physical Constraints} & \textbf{Software Constraints} &
-                             \textbf{Typical Value} & \textbf{Uncertainty}\\
+                             \textbf{Typical Value} \\
   \midrule 
-  $EEG$ & $0<EGG$ & $EEG_\text{min} \leq EGG \leq EEG_\text{max}$ & 30 $\mu V$ & -  \\
-  $F(EEG)$ & $0<F(EGG)$ & $F(EEG)_\text{min} \leq F(EGG) \leq F(EEG)\text{max}$ & 5 -15 HZ $\mu V$ & -  \\
+  $EEG$ & $-100<EEG<100$ & $EEG_\text{min} \leq EEG \leq EEG_\text{max}$ & 30 $\mu V$   \\
+  $F(EEG)$ & $0<F(EEG)<512$ & $F(EEG)_\text{min} \leq F(EEG) \leq F(EEG)\text{max}$ & 5 -15 HZ $\mu V$   \\
   \bottomrule
 \end{longtable*}
 \end{table}
@@ -1095,9 +1122,9 @@ Table~\ref{TblSpecParams}.
   \toprule
   \textbf{Var} & \textbf{Value} \\
   \midrule 
-  $EEG_\text{min}$ & $10 \mu V$\\
-   $EEG_\text{max}$ & $100 \mu V$\\
-   $F(EEG)_\text{min}$ & $0.1 hz $\\
+  $EEG_\text{min}$ & $-50 \mu V$\\
+   $EEG_\text{max}$ & $50 \mu V$\\
+   $F(EEG)_\text{min}$ & $0.05 hz $\\
    $F(EEG)\text{max}$ & $100 hz $\\
   \bottomrule
 \end{longtable*}
@@ -1140,25 +1167,27 @@ qualities that the software is expected to exhibit.
 
 \noindent \begin{itemize}
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Inputs}:]  \progname shall verify that the input data are valid. Frequency component of the EEG data should be checked to see if the data is band-pass filtered. Also, \progname should ask the user to confirm if the artifact removal has been done. An error message shall be displayed if input data are invalid.
+\item[R\refstepcounter{reqnum}\thereqnum \label{R_Input}:]  \progname{} shall take EEG signal, MRI data, channel location file and the type of algorithm to use as inputs. 
+
+\item[R\refstepcounter{reqnum}\thereqnum \label{R_InpVal}:]  \progname{} shall verify that the inputs from \rref{R_Input} are valid. Frequency component of the EEG data should be checked to see if the data is band-pass filtered. Also, \progname should ask the user to confirm if the artifact removal has been done. An error message shall be displayed if input data are invalid.
 %\plt{Requirements
 %    for the inputs that are supplied by the user.  This information has to be
 %    explicit.}
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Inputs}:]  \progname shall verify that the covariance matrix of the input data is not rank-deficient.  An error message shall be displayed if input data is invalid.
+\item[R\refstepcounter{reqnum}\thereqnum \label{R_Cov}:]  \progname{} shall verify that the covariance matrix of the input data from  \rref{R_Input}  is not rank-deficient (\aref{A_SufData}).  An error message shall be displayed if input data is invalid.
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_OutputInputs}:] A topographical plot of the electrode signals (EEG) would be output in addition to power plot for confirmation. 
+%\item[R\refstepcounter{reqnum}\thereqnum \label{R_OutputInputs}:] A topographical plot of the electrode signals (EEG) would be output in addition to power plot for confirmation. 
 %\plt{It isn't
 %    always required, but often echoing the inputs as part of the output is a
 %    good idea.}
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Calculate}:] \progname shall provide correct calculate according to Instance Models according to the user’s choice of which method to use.
+\item[R\refstepcounter{reqnum}\thereqnum \label{R_Calc}:] \progname{} shall provide correct calculate according to Instance Models (\iref{IM_LF} and \iref{IM_HM}) according to the user’s choice of which method to use (\iref{IM_LCMV}).
 %\plt{Calculation
 %    related requirements.}
 
 %\item[R\refstepcounter{reqnum}\thereqnum \label{R_VerifyOutput}:]
 %  \plt{Verification related requirements.}
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Output}:] \progname shall plot the sources on a sliced MRI (and shall guarantee that the output file is the same pixel size as the input file) and 3D brain model.
+\item[R\refstepcounter{reqnum}\thereqnum \label{R_Output}:] \progname{} shall plot the sources on a sliced MRI (and shall guarantee that the output file is the same pixel size as the input file) and 3D brain model.
 %\plt{Output related
 %    requirements.}
 
@@ -1169,25 +1198,17 @@ qualities that the software is expected to exhibit.
 %\plt{List your nonfunctional requirements.  You may consider using a fit
 %  criterion to make them verifiable.}
 
-\noindent \begin{itemize}
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Output}:] \progname shall be easy to be checked or tested.
+Generally,  \progname{} shall be easy to be checked or tested. It should not crash when a user provides invalid input. Also, the software should  be able to run on Windows 10 and macOS 10.14 environments as MATLAB can be installed on them.\\
 
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Output}:] \progname will not crash when a user provides invalid input.
-
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Output}:] \progname shall be easy and satisfying for users to learn and use.
-
-\item[R\refstepcounter{reqnum}\thereqnum \label{R_Output}:] \progname shall be able to run on Windows 10, macOS 10.14, and Ubuntu Linux 18.04. environments.
-
-\end{itemize}
 
 \section{Likely Changes}    
 
 \noindent \begin{itemize}
 
-\item[LC\refstepcounter{lcnum}\thelcnum\label{LC_meaningfulLabel}:] The algorithms used to solve the inverse problem might change. Currently LCMV and sLORETA are going to be implemented. However, we might modify this.
+\item[LC\refstepcounter{lcnum}\thelcnum\label{LC_alg}:] \aref{A_alg} The algorithms used to solve the inverse problem might change. Currently LCMV and sLORETA are going to be implemented. However, we might modify this.
 
-\item[LC\refstepcounter{lcnum}\thelcnum\label{LC_meaningfulLabel}:] The option of plotting the source activity in a 3D format might be added.
+\item[LC\refstepcounter{lcnum}\thelcnum\label{LC_HM}:] The option of plotting the source activity in a 3D format might be added.
 
 %\plt{Give the likely changes, with a reference to the related assumption (aref), as appropriate.}
 
@@ -1215,17 +1236,17 @@ The purpose of the traceability matrices is to provide easy references on what
 has to be additionally modified if a certain component is changed.  Every time a
 component is changed, the items in the column of that component that are marked
 with an ``X'' may have to be modified as well.  Table~\ref{Table:trace} shows the
-dependencies of theoretical models, general definitions, data definitions, and
+dependencies of theoretical models, data definitions, and
 instance models with each other. Table~\ref{Table:R_trace} shows the
 dependencies of instance models, requirements, and data constraints on each
 other. Table~\ref{Table:A_trace} shows the dependencies of theoretical models,
 general definitions, data definitions, instance models, and likely changes on
 the assumptions.
 
-\plt{You will have to modify these tables for your problem.}
-
-\plt{The traceability matrix is challenging to maintain manually.  Please do
-  your best.  In the future tools (like Drasil) will make this much easier.}
+%\plt{You will have to modify these tables for your problem.}
+%
+%\plt{The traceability matrix is challenging to maintain manually.  Please do
+%  your best.  In the future tools (like Drasil) will make this much easier.}
 
 \afterpage{
 \begin{landscape}
@@ -1233,27 +1254,19 @@ the assumptions.
 \centering
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
 \hline
-	& \aref{A_OnlyThermalEnergy}& \aref{A_hcoeff}& \aref{A_mixed}& \aref{A_tpcm}& \aref{A_const_density}& \aref{A_const_C}& \aref{A_Newt_coil}& \aref{A_tcoil}& \aref{A_tlcoil}& \aref{A_Newt_pcm}& \aref{A_charge}& \aref{A_InitTemp}& \aref{A_OpRangePCM}& \aref{A_OpRange}& \aref{A_htank}& \aref{A_int_heat}& \aref{A_vpcm}& \aref{A_PCM_state}& \aref{A_Pressure} \\
+	& \aref{A_CD}& \aref{A_BrainOnly}& \aref{A_AllChan}& \aref{A_SP}& \aref{A_SufData}& \aref{A_TC}\\
 \hline
-\tref{T_COE}        & X& & & & & & & & & & & & & & & & & & \\ \hline
-\tref{T_SHE}        & & & & & & & & & & & & & & & & & & & \\ \hline
-\tref{T_LHE}        & & & & & & & & & & & & & & & & & & & \\ \hline
-\dref{NL}           & & X& & & & & & & & & & & & & & & & & \\ \hline
-\dref{ROCT}         & & & X& X& X& X& & & & & & & & & & & & & \\ \hline
-\ddref{FluxCoil}    & & & & & & & X& X& X& & & & & & & & & & \\ \hline
-\ddref{FluxPCM}     & & & X& X& & & & & & X& & & & & & & & & \\ \hline
-\ddref{D_HOF}       & & & & & & & & & & & & & & & & & & & \\ \hline
-\ddref{D_MF}        & & & & & & & & & & & & & & & & & & & \\ \hline
-\iref{ewat}         & & & & & & & & & & & X& X& & X& X& X& & & X \\ \hline
-\iref{epcm}         & & & & & & & & & & & & X& X& & & X& X& X& \\ \hline
-\iref{I_HWAT}       & & & & & & & & & & & & & & X& & & & & X \\ \hline
-\iref{I_HPCM}       & & & & & & & & & & & & & X& & & & & X & \\ \hline
-\lcref{LC_tpcm}     & & & & X& & & & & & & & & & & & & & & \\ \hline
-\lcref{LC_tcoil}    & & & & & & & & X& & & & & & & & & & & \\ \hline
-\lcref{LC_tlcoil}   & & & & & & & & & X& & & & & & & & & & \\ \hline
-\lcref{LC_charge}   & & & & & & & & & & & X& & & & & & & & \\ \hline
-\lcref{LC_InitTemp} & & & & & & & & & & & & X& & & & & & & \\ \hline
-\lcref{LC_htank}    & & & & & & & & & & & & & & & X& & & & \\
+\tref{T_CurrentDipole}        & X& & & & &  \\ \hline
+\tref{T_FP}        & X& X& & & & \\ \hline
+\tref{T_IP}        & & & & X& &  \\ \hline
+\ddref{EEG}     & & & & & & \\ \hline
+\ddref{MRI}      & & & X& & & \\ \hline
+\ddref{Loc}        & & & & & & \\ \hline
+\iref{IM_HM}        & & & X& & & \\ \hline
+\iref{IM_LF}      X&X & X& & & &  \\ \hline
+\iref{IM_LCMV}       X& X& X&X & & & \\ \hline
+\lcref{LC_alg}        & & & & & &X \\ \hline
+\lcref{LC_HM}    & & & & & & \\
 \hline
 \end{tabular}
 \caption{Traceability Matrix Showing the Connections Between Assumptions and Other Items}
@@ -1266,21 +1279,17 @@ the assumptions.
 \centering
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
 \hline        
-	& \tref{T_COE}& \tref{T_SHE}& \tref{T_LHE}& \dref{NL}& \dref{ROCT} & \ddref{FluxCoil}& \ddref{FluxPCM} & \ddref{D_HOF}& \ddref{D_MF}& \iref{ewat}& \iref{epcm}& \iref{I_HWAT}& \iref{I_HPCM} \\
+	& \tref{T_CurrentDipole}& \tref{T_FP}& \tref{T_IP}& \ddref{EEG}& \ddref{MRI} & \ddref{Loc}& \iref{IM_HM}& \iref{IM_LF}& \iref{IM_LCMV} \\
 \hline
-\tref{T_COE}     & & & & & & & & & & & & & \\ \hline
-\tref{T_SHE}     & & & X& & & & & & & & & & \\ \hline
-\tref{T_LHE}     & & & & & & & & & & & & & \\ \hline
-\dref{NL}        & & & & & & & & & & & & & \\ \hline
-\dref{ROCT}      & X& & & & & & & & & & & & \\ \hline
-\ddref{FluxCoil} & & & & X& & & & & & & & & \\ \hline
-\ddref{FluxPCM}  & & & & X& & & & & & & & & \\ \hline
-\ddref{D_HOF}    & & & & & & & & & & & & & \\ \hline
-\ddref{D_MF}     & & & & & & & & X& & & & & \\ \hline
-\iref{ewat}      & & & & & X& X& X& & & & X& & \\ \hline
-\iref{epcm}      & & & & & X& & X& & X& X& & & X \\ \hline
-\iref{I_HWAT}    & & X& & & & & & & & & & & \\ \hline
-\iref{I_HPCM}    & & X& X& & & & X& X& X& & X& & \\
+\tref{T_CurrentDipole}     & & & & & &X & & &  \\ \hline
+\tref{T_FP}    		 & &X & & & & & X& & \\ \hline
+\tref{T_IP}     		&& & &X & & & & & \\ \hline
+\ddref{EEG}       		& & & & & & & & & \\ \hline
+\ddref{MRI}      		& & & &X & & & & &  \\ \hline
+\ddref{Loc} 		& & & & & & & & &\\ \hline
+\iref{IM_HM}     		 & & & & & & & & &\\ \hline
+\iref{IM_LF}      		& & & & & & X& & &\\ \hline
+\iref{IM_LCMV}    	& &X & & & & &  & &\\
 \hline
 \end{tabular}
 \caption{Traceability Matrix Showing the Connections Between Items of Different Sections}
@@ -1291,23 +1300,19 @@ the assumptions.
 \centering
 \begin{tabular}{|c|c|c|c|c|c|c|c|}
 \hline
-	& \iref{ewat}& \iref{epcm}& \iref{I_HWAT}& \iref{I_HPCM}& \ref{sec_DataConstraints}& \rref{R_RawInputs}& \rref{R_MassInputs} \\
+	& \iref{IM_HM}& \iref{IM_LF}& \iref{IM_LCMV} & \rref{R_Input} & \rref{R_InpVal} & \rref{R_Cov} & \rref{R_Calc}\\
 \hline
-\iref{ewat}            & & X& & & & X& X \\ \hline
-\iref{epcm}            & X& & & X& & X& X \\ \hline
-\iref{I_HWAT}          & & & & & & X& X \\ \hline
-\iref{I_HPCM}          & & X& & & & X& X \\ \hline
-\rref{R_RawInputs}     & & & & & & & \\ \hline
-\rref{R_MassInputs}    & & & & & & X& \\ \hline
-\rref{R_CheckInputs}   & & & & & X& & \\ \hline
-\rref{R_OutputInputs}  & X& X& & & & X& X \\ \hline
-\rref{R_TempWater}     & X& & & & & & \\ \hline 
-\rref{R_TempPCM}       & & X& & & & & \\ \hline
-\rref{R_EnergyWater}   & & & X& & & & \\ \hline
-\rref{R_EnergyPCM}     & & & & X& & & \\ \hline
-\rref{R_VerifyOutput}  & & & X& X& & & \\ \hline
-\rref{R_timeMeltBegin} & & X& & & & & \\ \hline
-\rref{R_timeMeltEnd}   & & X& & & & & \\ 
+\tref{T_CurrentDipole}            & & X& & & & X& X \\ \hline
+\iref{T_FP}            & X& & & X& & X& X \\ \hline
+\iref{T_IP}          & & & & & & X& X \\ \hline
+\iref{IM_HM}          & & X& & & & X& X \\ \hline
+\iref{IM_LF}     & & & & & & & \\ \hline
+\iref{IM_LCMV}    & & & & & & X& \\ \hline
+\rref{R_Input}   & & & X& & & & \\ \hline
+\rref{R_InpVal}     & & & & X& & & \\ \hline
+\rref{R_Cov}  & & & X& X& & & \\ \hline
+\rref{R_Calc} & & X& & & & & \\ \hline
+\rref{R_Output}   & & X& & & & & \\ 
 \hline
 \end{tabular}
 \caption{Traceability Matrix Showing the Connections Between Requirements and Instance Models}
@@ -1345,8 +1350,8 @@ instance models, requirements, and data constraints on each other.
 % 	\end{center}
 % \end{figure}
 
-\section{Values of Auxiliary Constants}
-NA
+%\section{Values of Auxiliary Constants}
+%NA
 %\plt{Show the values of the symbolic parameters introduced in the report.}
 %
 %\plt{The definition of the requirements will likely call for SYMBOLIC\_CONSTANTS.
@@ -1354,52 +1359,53 @@ NA
 
 \newpage
 
-\bibliographystyle {plainnat}
+%\bibliographystyle {plainnat}
+\bibliographystyle{unsrtnat}
 
 \bibliography {SRS}
-\bibliography {../../refs/References}
 
-\newpage
 
-\noindent \plt{The following is not part of the template, just some things to consider
-  when filing in the template.}
-
-\noindent \plt{Grammar, flow and \LaTeX advice:
-\begin{itemize}
-\item For Mac users \texttt{*.DS\_Store} should be in \texttt{.gitignore}
-\item \LaTeX{} and formatting rules
-\begin{itemize}
-\item Variables are italic, everything else not, includes subscripts (link to
-  document)
-\begin{itemize}
-\item \href{https://physics.nist.gov/cuu/pdf/typefaces.pdf}{Conventions}
-\item Watch out for implied multiplication
-\end{itemize}
-\item Use BibTeX
-\item Use cross-referencing
-\end{itemize}
-\item Grammar and writing rules
-\begin{itemize}
-\item Acronyms expanded on first usage (not just in table of acronyms)
-\item ``In order to'' should be ``to''
-\end{itemize}
-\end{itemize}}
-
-\noindent \plt{Advice on using the template:
-\begin{itemize}
-\item Difference between physical and software constraints
-\item Properties of a correct solution means \emph{additional} properties, not
-  a restating of the requirements (may be ``not applicable'' for your problem).
-  If you have a table of output constraints, then these are properties of a
-  correct solution.
-\item Assumptions have to be invoked somewhere
-\item ``Referenced by'' implies that there is an explicit reference
-\item Think of traceability matrix, list of assumption invocations and list of
-  reference by fields as automatically generatable
-\item If you say the format of the output (plot, table etc), then your
-  requirement could be more abstract
-\end{itemize}
-}
+%\newpage
+%
+%\noindent \plt{The following is not part of the template, just some things to consider
+%  when filing in the template.}
+%
+%\noindent \plt{Grammar, flow and \LaTeX advice:
+%\begin{itemize}
+%\item For Mac users \texttt{*.DS\_Store} should be in \texttt{.gitignore}
+%\item \LaTeX{} and formatting rules
+%\begin{itemize}
+%\item Variables are italic, everything else not, includes subscripts (link to
+%  document)
+%\begin{itemize}
+%\item \href{https://physics.nist.gov/cuu/pdf/typefaces.pdf}{Conventions}
+%\item Watch out for implied multiplication
+%\end{itemize}
+%\item Use BibTeX
+%\item Use cross-referencing
+%\end{itemize}
+%\item Grammar and writing rules
+%\begin{itemize}
+%\item Acronyms expanded on first usage (not just in table of acronyms)
+%\item ``In order to'' should be ``to''
+%\end{itemize}
+%\end{itemize}}
+%
+%\noindent \plt{Advice on using the template:
+%\begin{itemize}
+%\item Difference between physical and software constraints
+%\item Properties of a correct solution means \emph{additional} properties, not
+%  a restating of the requirements (may be ``not applicable'' for your problem).
+%  If you have a table of output constraints, then these are properties of a
+%  correct solution.
+%\item Assumptions have to be invoked somewhere
+%\item ``Referenced by'' implies that there is an explicit reference
+%\item Think of traceability matrix, list of assumption invocations and list of
+%  reference by fields as automatically generatable
+%\item If you say the format of the output (plot, table etc), then your
+%  requirement could be more abstract
+%\end{itemize}
+%}
 
 
 \end{document}
