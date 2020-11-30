@@ -36,11 +36,12 @@ urlcolor=cyan          % color of external links
 \input{../../Comments}
 \input{../../Common}
 
+\renewcommand{\progname}{EEGSourceLocalization} 
 \begin{document}
 
 \title{Module Interface Specification for \progname{}}
 
-\author{Author Name}
+\author{Leila Mousapour}
 
 \date{\today}
 
@@ -53,8 +54,8 @@ urlcolor=cyan          % color of external links
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+27 Nov, 2020 & 1.0 & First draft of the MIS\\
+
 \bottomrule
 \end{tabularx}
 
@@ -62,9 +63,7 @@ Date 2 & 1.1 & Notes\\
 
 \section{Symbols, Abbreviations and Acronyms}
 
-See SRS Documentation at \wss{give url}
-
-\wss{Also add any additional symbols, abbreviations or acronyms}
+See SRS Documentation at \url{https://github.com/LeilaMousapour/Brain-Computer-Interface-/blob/master/docs/SRS/SRS.pdf}
 
 \newpage
 
@@ -77,16 +76,13 @@ See SRS Documentation at \wss{give url}
 \section{Introduction}
 
 The following document details the Module Interface Specifications for
-\wss{Fill in your project name and description}
+\progname{}. This software is designed estimate the activity of every voxel of the brain in time based on the electric potentials recorded from the scalp in the form of EEG signals by means of source localization (SL) algorithms. This document specifies how every module is interfacing with every other part of the program based on  "module state machine" approach.\\
 
 Complementary documents include the System Requirement Specifications
 and Module Guide.  The full documentation and implementation can be
-found at \url{...}.  \wss{provide the url for your repo}
+found at \url{https://github.com/LeilaMousapour/Brain-Computer-Interface-}
 
 \section{Notation}
-
-\wss{You should describe your notation.  You can use what is below as
-  a starting point.}
 
 The structure of the MIS for modules comes from \citet{HoffmanAndStrooper1995},
 with the addition that template modules have been adapted from
@@ -108,15 +104,16 @@ character & char & a single symbol or digit\\
 integer & $\mathbb{Z}$ & a number without a fractional component in (-$\infty$, $\infty$) \\
 natural number & $\mathbb{N}$ & a number without a fractional component in [1, $\infty$) \\
 real & $\mathbb{R}$ & any number in (-$\infty$, $\infty$)\\
+matrix & mat &  2D datatype containing double-precision floating-point values.\\
+cell & cell & A cell array is a data type with indexed data containers called cells, where each cell can contain any type of data.\\
+structure & structure & A structure array is a data type that groups related data using data containers called fields. Each field can contain any type of data.Access data in a structure using dot notation of the form structName.fieldName.\\
+
 \bottomrule
 \end{tabular} 
 \end{center}
 
 \noindent
-The specification of \progname \ uses some derived data types: sequences, strings, and
-tuples. Sequences are lists filled with elements of the same data type. Strings
-are sequences of characters. Tuples contain a list of values, potentially of
-different types. In addition, \progname \ uses functions, which
+The specification of \progname \ uses some derived data types: matrix which is datatype containing double-precision floating-point values, cell array that is a data type with indexed data containers called cells, where each cell can contain any type of data and structure array is a data type that groups related data using data containers called fields. \progname \ uses functions, which
 are defined by the data types of their inputs and outputs. Local functions are
 described by giving their type signature followed by their specification.
 
@@ -136,15 +133,16 @@ The following table is taken directly from the Module Guide document for this pr
 
 \multirow{7}{0.3\textwidth}{Behaviour-Hiding} & Input Parameters\\
 & Output Format\\
-& Output Verification\\
-& Temperature ODEs\\
-& Energy Equations\\ 
+& Covariance Calculator\\
+& Head Model\\
+& Lead Filed\\
+& Source Localization\\ 
 & Control Module\\
 & Specification Parameters Module\\
 \midrule
 
-\multirow{3}{0.3\textwidth}{Software Decision} & {Sequence Data Structure}\\
-& ODE Solver\\
+\multirow{3}{0.3\textwidth}{Software Decision} & {Matrix/Cell/Structure built-in MATLAB Data Structures}\\
+& Various built-in MATLAB and Fieldtrip toolbox algorithms\\
 & Plotting\\
 \bottomrule
 
@@ -153,26 +151,254 @@ The following table is taken directly from the Module Guide document for this pr
 \label{TblMH}
 \end{table}
 
-\newpage
+
+%%%%%%%%%%%%%%%%%%%% MODULE 0
+
 ~\newpage
 
-\section{MIS of \wss{Module Name}} \label{Module} \wss{Use labels for
-  cross-referencing}
+\section{MIS of Control Module} \label{control} 
 
-\wss{You can reference SRS labels, such as R\ref{R_Inputs}.}
-
-\wss{It is also possible to use \LaTeX for hypperlinks to external documents.}
 
 \subsection{Module}
 
-\wss{Short name for the module}
+main
 
 \subsection{Uses}
-
+\begin{itemize}
+\item Source Localization Module (Section \ref{SL})
+\item Output Format Module (Section \ref{Output})
+\item Plot Module (Section \ref{Plot})
+\end{itemize}
 
 \subsection{Syntax}
 
 \subsubsection{Exported Constants}
+None
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{2cm} p{4cm} p{4cm} p{2cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+main & - & - & - \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+None
+
+\subsubsection{Access Routine Semantics}
+
+\noindent main():
+\begin{itemize}
+\item transition: Modify the state of Param module and the environment variables
+  for the Plot and Output modules by following these steps\\
+\end{itemize}
+
+\noindent Get (filenameIn: string) and (filenameOut: string) from user\\
+
+\noindent load\_params(filenameIn)\\
+
+\noindent \#\textit{Find covariance of the input EEG data ($EEG_cov$} 
+
+\noindent $ EEG_cov := \text{solve}(\text{CovCalc(Param.$EEG$)})$\\
+
+
+
+\noindent \#\textit{ Generate a head model based of the MRI}\\
+
+\noindent $Headmodel  := HeadModelgenerator ($MRI$)$\\
+
+
+\noindent \#\textit{Align the electrodes on the generated head model and calculate the forward model (lead field matrix)} \\
+
+\noindent $LeadField := \text{solve}( (leadfield($headmodel$, $elecLoc$))$ \\
+
+\noindent \#\textit{Calculate the sources.}\\
+
+ \noindent LCMVbeamformer($headmodel$, $EEGcov$, $leadfiled$, $elecAligned$, $AlgCfg$)\\
+ 
+\noindent $out := Var(\mathbf q_i) = tr{[\mathbf H^T(q_i) C^{-1}(x) H(q_i)]^{-1}}$\\
+
+
+\noindent \#\textit{Output calculated source activities to a file and to a plot. }\\
+
+
+
+\noindent plot($MRI$, $Var(\mathbf q_i)$)\\
+
+\noindent output(filenameOut, $Var(\mathbf q_i)$, $EEG$, $elecAligned$, $AlgCfg$)\\
+
+
+%%%%%%%%%%%%%%%%%%%% MODULE 1
+~\newpage
+
+\section{MIS of Input Parameter Module} \label{Param} 
+
+\subsection{Module}
+
+Param
+
+\subsection{Uses}
+\begin{itemize}
+\item Specification Parameter Module (Section \ref{ParamSpec})
+\item Hardware hiding module
+\end{itemize}
+
+\subsection{Syntax}
+\subsubsection{Exported Constants}
+None
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{3cm} p{4cm} p{2cm} p{5cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+paramLoad & String (fileName.ext) & - & FileError \\
+VrifyParam & - & - & FrequencyRangeError, EEGRankDeficientError \\
+EEG & -& structure &  \\
+elec-location & -& structure &  \\
+MRI & -& structure &  \\
+AlgConfig & -& structure &  \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+The input parameter module will be implemented as a class and it will remember the values of the input parameters for the lifelong of the program. Thus, all the inputs are state variables.\\
+
+\# From R1\\
+EEG: structure\\
+elec-location: structure\\
+MRI: structure\\
+AlgConfig: structure\\
+
+\subsubsection{Environment Variables}
+Its purpose is to capture when the module has external interaction with the environment, such as for a device driver, screen interface, keyboard, file, etc. In the case of this module, the environment vars are the files we read the inputs from.\\
+
+EEGdataFile : a file contacting the filtered, cleaned EEG data which is segmented and formatted into Fieldtrip package acceptable format (containing the trials, label of the channels, time points and sampling frequency.)\\
+
+ElectrodeLocationFile: a file containing the location of the EEG electrode channels, the system the EEG was recorded (Biosemi, 10-20 etc.) and the coordination system of the values.\\
+
+MRIfile: a file containing the anatomycal MRI of the person or a template MRI file.\\
+
+AlgConfig: a file containing the type of the SL algorithm to use and the configurations of the algorithm.\\
+
+
+
+\subsubsection{Assumptions}
+\begin{itemize}	
+	\item ParamLoad will be called before the values of any state variables will be accessed.
+	\item The EEGdataFile is arranged as Fieldtrip package acceptable format.
+	\item ElectrodeLocationFile is in .loc or .sfp format.
+\end{itemize}
+	
+
+\subsubsection{Access Routine Semantics}
+
+Function to load, verify, and store input data (R1 and R2 from SRS).\\
+\begin{enumerate}
+
+\item Dot function to access the state variables
+
+\noindent Param.$EEG$:
+\begin{itemize}
+\item output: \textit{out} := $EGG$
+\item exception: none
+\end{itemize}
+
+\noindent Param.$elec-loc$:
+\begin{itemize}
+\item output: \textit{out} := $elec-loc$
+\item exception: none
+\end{itemize}
+
+\noindent Param.$MRI$:
+\begin{itemize}
+\item output: \textit{out} := $MRI$
+\item exception: none
+\end{itemize}
+
+\noindent Param.$AlgCfg$:
+\begin{itemize}
+\item output: \textit{out} := $AlgCfg$
+\item exception: none
+\end{itemize}
+
+\item \noindent load\_params($EEGdataFile, ElectrodeLocationFile, MRIfile, AlgConfig$):
+\begin{itemize}
+\item transition: The filenames are first associated with the file f.  {inputFile} is used to modify the state variables using the following procedural specification:
+\begin{enumerate}
+\item Read data  from inputFiles to populate all the state variables.
+\item Calculate the Welch power spectrum of the EEG signal. \\
+Param.$EEGPSD$ := EEg Welch power spectral density.
+\item Calculate the rank of the EEG signal matrix.\\
+Param.$EEGrank$ := rank of the EEG data matrix
+
+
+\item verify\_params()
+\end{enumerate}
+
+\item exception: exc := a file name $s$ cannot be found OR the format of
+  inputFile is incorrect $\Rightarrow$  FileError
+\end{itemize}
+
+\item \noindent verify\_params():
+\begin{itemize}
+\item out: \textit{out} := none
+\item exception: exc := 
+\end{itemize}
+\noindent \begin{longtable*}[l]{l l} 
+$\neg (Param.$EEGPSD$ <0.01)$ & $\Rightarrow$ EEGnotFiltered\\
+$\neg (Param.$EEGPSD$ >100)$ & $\Rightarrow$ EEGnotFiltered\\
+$\neg (Param.$EEG$ <-50)$ & $\Rightarrow$ EEGAmpError\\
+$\neg (Param.$EEG$ >50)$ & $\Rightarrow$ EEGnoEEGAmpErrortFiltered\\
+$\neg (Param.$EEGrank$ <Param.$EEG$.channelNum )$ & $\Rightarrow$ RankDeficient\\
+\end{longtable*}
+
+
+\end{enumerate}
+
+%\subsubsection{Local Functions}
+%
+%\wss{As appropriate} \wss{These functions are for the purpose of specification.
+%  They are not necessarily something that is going to be implemented
+%  explicitly.  Even if they are implemented, they are not exported; they only
+%  have local scope.}
+
+
+%%%%%%%%%%%%%%%% MODULE2
+~\newpage
+
+\section{MIS of Parameter Specification Module } \label{ParamSpec} 
+
+The secrets of this module is the value of the specification parameters.
+
+\subsection{Module}
+
+SpecParam
+
+\subsection{Uses}
+
+N/A
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+From Table 2 in SRS update the values in the data object:\\
+SpecParam.$EEG_min$ := -50\\
+SpecParam.$EEG_max$ := +50\\
+SpecParam.$F(EEG_min)$ := 0.05\\
+SpecParam.$F(EEG_max)$ := 100\\
+
 
 \subsubsection{Exported Access Programs}
 
@@ -181,7 +407,289 @@ The following table is taken directly from the Module Guide document for this pr
 \hline
 \textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
 \hline
-\wss{accessProg} & - & - & - \\
+SpecParam & - & - & - \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+N/A
+
+
+%%%%%%%%%%%% MODULE 3
+~\newpage
+
+\section{MIS of Covariance Calculation} \label{Cov} 
+This module calculates the covariance of the  EEG data to use in the SL module later.
+
+\subsection{Module}
+
+CovCalc
+
+\subsection{Uses}
+
+\begin{itemize}
+\item Input Parameter Module (Section \ref{Param})
+\end{itemize}
+
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+None
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{2cm} p{4cm} p{4cm} p{2cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+CovCalc & structure & structure & - \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{Access Routine Semantics}
+
+CovCalc(Param.$EEG$):
+\begin{itemize}
+\item output: $out : = \frac {\sum_{n=1}^{channno} (x_i - \bar{x})(y_i - \bar{y})} {channo - 1}$ 
+\item exception: none
+\end{itemize}
+
+
+%%%%%%%%%%% MODULE 4
+~\newpage
+
+\section{MIS of Head model Module} \label{HM} 
+
+The secrete of this module is that is creates the head model with BEM (Boundary Element Method) based on MRI and align the electrodes on it. The likely change here is that method of creating the head model and the parameters (conductivity of the brain tissues) might change.
+
+
+\subsection{Module}
+
+HeadModelgenerator
+
+\subsection{Uses}
+
+\begin{itemize}
+\item Input Parameter Module (Section \ref{Param})
+\end{itemize}
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+None
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{4cm} p{3cm} p{3cm} p{2cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+getFiducial & matrix & matrix & - \\
+volumeSegment & structure & structure& -\\
+prepareMesh & structure & structure& -\\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+
+
+\subsubsection{Assumptions}
+\begin{itemize}
+\item we assume the tissue conductivity for each tissue type to be a certain constant
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+\begin{enumerate}
+\item getFiducial($MRI$):
+\begin{itemize}
+\item output: $out := \begin{bmatrix}
+x_1 &y_1&z_1\\
+x_2 &y_2&z_2\\
+x_3 &y_3&z_3
+\end{bmatrix}$
+ = $ \begin{bmatrix}
+Nasion\\
+Right Ear\\
+Left Ear
+\end{bmatrix}$
+
+\item exception: \\
+exc := MRI structure does not include fiducial point's coordinations $\Rightarrow$  FidutialMissing
+\end{itemize}
+
+
+\item volumeSegment($MRI$)
+\begin{itemize}
+\item output: $out := volSeg = $ the coordination of all points of the 3 surfaces of the head (brain/skull/scalp)
+\item exception: none
+\end{itemize}
+
+\item prepareMesh($volSeg$)
+\begin{itemize}
+\item output: $out := $ the segmentation of the 3 surfaces of the head (brain/skull/scalp) using Boundary Element Method.
+
+\item exception: none
+\end{itemize}
+\end{enumerate}
+
+%%%%%%%%%%% module 5
+~\newpage
+
+\section{MIS of Lead field Module} \label{LF} 
+
+The service of this module is that it first align the electrode locations on the generated headmodel and then, segments the brain volume into 3D grid of voxels and create the source model, solve the forward problem and creates the leadfield matrix.
+
+\subsection{Module}
+
+LeadFeild
+
+\subsection{Uses}
+\begin{itemize}
+\item Input Parameter Module (Section \ref{Param})
+\end{itemize}
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+None
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{4cm} p{3cm} p{3cm} p{2cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+alignElec & structure & structure & - \\
+prepSourceModel & structure & structure & - \\
+LFcompute & structure & structure & - \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{Access Routine Semantics}
+
+\begin{enumerate}
+
+\item alignElec($elecLoc$):
+\begin{itemize}
+\item output: is a structure including the new coordination for each electrode which is the result of a n linear transfer that maps the fiducial points of the input electrode file with the input MRI file that we created the headmodel based on.
+\item exception: none
+\end{itemize}
+
+\item prepSourceModel($alignedElecLoc$, $headmodel$):
+\begin{itemize}
+\item output: is a structure that contains the segmented headmodel volume into voxels which each of them will be considered as a source point. Thus, it creates out source model (3D location of the centre of each voxel).
+\item exception: none
+\end{itemize}
+
+\item LFcompute($alignedElecLoc$, $sourceModel$):
+\begin{itemize}
+\item output: $out := 
+K = \begin{bmatrix} 
+    K_{1,1} & K_{1,2} & \dots & K_{1,N_v} \\
+    \vdots & \ddots & \\
+    K_{N_e, 1} &       \dots &  & K_{N_e, N_v}
+    \end{bmatrix}
+$
+Where $K_{i,l} = (k^x_{i,l}, k^y_{i,l}, k^z_{i,l})$
+is the scalp electric potential at the $i$th electrode, due to a unit strength X-oriented dipole at the $l$th voxel/source\\
+
+\item exception: none
+\end{itemize}
+
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%% MODULE 6
+~\newpage
+
+\section{MIS of Source Localization Module} \label{SL} 
+Compute the sources’ activity in time based on the type of algorithm the user chose
+
+\subsection{Module}
+FindSources
+
+
+\subsection{Uses}
+\subsection{Uses}
+\begin{itemize}
+\item Covariance Calculator Module (Section \ref{Cov})
+\item Head Model Module (Section \ref{HM})
+\item Lead Feild Module (Section \ref{LF})
+\end{itemize}
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+None
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{4cm} p{3cm} p{4cm} p{2cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+LCMVbeamformer & structure & structure & - \\
+sLORETA & structure & structure & - \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{Assumptions}
+\begin{itemize}
+\item For simplicity of the calculation, it is assumed the orientation of the dipole (current source) is perpendicular to the scalp as opposed to calculation of the activity of the source in the 3 orientations $x,y,x$ in the space. 
+
+\end{itemize}
+
+\subsubsection{Access Routine Semantics}
+\begin{enumerate}
+
+\item LCMVbeamformer($headmodel$, $EEGcov$, $leadfiled$, $elecAligned$):
+\begin{itemize}
+\item output: $out := Var(\mathbf q_i) = tr{[\mathbf H^T(q_i) C^{-1}(x) H(q_i)]^{-1}}$
+\item exception: non
+\end{itemize}
+
+\item sLORETA($headmodel$, $EEGcov$, $leadfiled$, $elecAligned$):
+\begin{itemize}
+\item output: $out := Var(\mathbf q_i) = tr{[\mathbf H^T(q_i) C^{-1}(x) H(q_i)]^{-1}}$
+\item exception: non
+\end{itemize}
+\end{enumerate}
+
+\newpage
+\section{MIS of Plotting Module} \label{Plot}
+
+\subsection{Module}
+
+plot
+
+\subsection{Uses}
+
+N/A
+
+\subsection{Syntax}
+
+\subsubsection{Exported Access Programs}
+
+\begin{center}
+\begin{tabular}{p{2cm} p{3cm} p{2cm} p{2cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+plot & structure & - & - \\
 \hline
 \end{tabular}
 \end{center}
@@ -190,51 +698,88 @@ The following table is taken directly from the Module Guide document for this pr
 
 \subsubsection{State Variables}
 
-\wss{Not all modules will have state variables.  State variables give the module
-  a memory.}
+None
 
 \subsubsection{Environment Variables}
 
-\wss{This section is not necessary for all modules.  Its purpose is to capture
-  when the module has external interaction with the environment, such as for a
-  device driver, screen interface, keyboard, file, etc.}
+win: 2D sequence of pixels displayed on the screen\\
 
 \subsubsection{Assumptions}
 
-\wss{Try to minimize assumptions and anticipate programmer errors via
-  exceptions, but for practical purposes assumptions are sometimes appropriate.}
+None
 
 \subsubsection{Access Routine Semantics}
 
-\noindent \wss{accessProg}():
+\noindent plot($MRI$, $Var(\mathbf q_i)$):
 \begin{itemize}
-\item transition: \wss{if appropriate} 
-\item output: \wss{if appropriate} 
-\item exception: \wss{if appropriate} 
+\item transition: Modify win to display a plot where the vertical axis
+  is time and one horizontal axis is temperature and the other
+  horizontal axis is energy.  The time should run from $0$ to $t_\text{final}$
+\item exception: none
 \end{itemize}
 
-\wss{A module without environment variables or state variables is unlikely to
-  have a state transition.  In this case a state transition can only occur if
-  the module is changing the state of another module.}
+%%%%%%%%%%%%%%%% module
+\newpage
 
-\wss{Modules rarely have both a transition and an output.  In most cases you
-  will have one or the other.}
+\section{MIS of Output Module} \label{Output}
 
-\subsubsection{Local Functions}
+\subsection{Module}
 
-\wss{As appropriate} \wss{These functions are for the purpose of specification.
-  They are not necessarily something that is going to be implemented
-  explicitly.  Even if they are implemented, they are not exported; they only
-  have local scope.}
+output
+
+\subsection{Uses}
+
+\begin{itemize}
+\item Input Parameter Module (Section \ref{Param})
+\end{itemize}
+
+\subsection{Syntax}
+
+\subsubsection{Exported Constants}
+
+$max\_width$: integer
+
+\subsubsection{Exported Access Program}
+
+\begin{center}
+\begin{tabular}{p{3cm} p{7cm} p{2cm} p{2cm}}
+\hline
+\textbf{Name} & \textbf{In} & \textbf{Out} & \textbf{Exceptions} \\
+\hline
+output & fname: string,  structure & - & - \\
+\hline
+\end{tabular}
+\end{center}
+
+\subsection{Semantics}
+
+\subsubsection{State Variables}
+
+None
+
+\subsubsection{Environment Variables}
+
+file: A MATLAB .mat file
+
+\subsubsection{Access Routine Semantics}
+
+\noindent output(fname, $Var(\mathbf q_i)$, $EEG$, $elecLoc$, $AlgCfg$):
+\begin{itemize}
+\item transition:  Write to environment variable named fname the
+  following: the input  parameters from Param, and the calculated source activities $Var(\mathbf q_i)$.  The functions will be output as sequences in this file. Also, the EEG data, electrode locations and the configuration for the SL algorithm from the input module are save with the output of the source localization so that it is recorded that how the sources are obtained.
+\item exception: none
+\end{itemize}
+
+
 
 \newpage
 
 \bibliographystyle {plainnat}
 \bibliography {../../../refs/References}
 
-\newpage
-
-\section{Appendix} \label{Appendix}
+%\newpage
+%
+%\section{Appendix} \label{Appendix}
 
 \wss{Extra information if required}
 
