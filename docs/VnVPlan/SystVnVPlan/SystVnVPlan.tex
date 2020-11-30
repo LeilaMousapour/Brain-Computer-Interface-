@@ -1,8 +1,10 @@
 \documentclass[12pt, titlepage]{article}
 
+\usepackage{amsmath}
 \usepackage{booktabs}
 \usepackage{tabularx}
 \usepackage{hyperref}
+\usepackage{siunitx}
 \hypersetup{
     colorlinks,
     citecolor=blue,
@@ -15,10 +17,11 @@
 \input{../../Comments}
 \input{../../Common}
 
+\renewcommand{\progname}{EEGSourceLocalization} 
 \begin{document}
 
-\title{Project Title: System Verification and Validation Plan for \progname{}} 
-\author{Author Name}
+\title{Project Title: System Verification and Validation Plan for \progname{} Software} 
+\author{Leila Mousapour}
 \date{\today}
 	
 \maketitle
@@ -30,8 +33,7 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+Nov 2, 2020 & 1.0 & First version of system VnV plan\\
 \bottomrule
 \end{tabularx}
 
@@ -47,201 +49,373 @@ Date 2 & 1.1 & Notes\\
 
 \section{Symbols, Abbreviations and Acronyms}
 
+%\renewcommand{\arraystretch}{1.2}
+%\begin{tabular}{l l} 
+%  \toprule		
+%  \textbf{symbol} & \textbf{description}\\
+%  \midrule 
+%  T & Test\\
+%  \bottomrule
+%\end{tabular}\\
+
+
+%\wss{symbols, abbreviations or acronyms -- you can simply reference the SRS
+%  \citep{SRS} tables, if appropriate}
+\subsection{Symbols}
+
+~\newline
+
+\renewcommand{\arraystretch}{1.2}
+%\begin{table}[ht]
+  \noindent \begin{tabular}{l l l} 
+    \toprule		
+    \textbf{symbol} & \textbf{unit} & \textbf{SI}\\
+    \midrule 
+    \si{\metre} & length & metre\\
+    hz & Frequency	& herts\\
+    \si{\second} & time & second\\
+    \si{\volt} & voltage & volt\\
+    \bottomrule
+  \end{tabular}
+  
+\subsection{Abbreviations and Acronyms}
+~\newline
 \renewcommand{\arraystretch}{1.2}
 \begin{tabular}{l l} 
   \toprule		
   \textbf{symbol} & \textbf{description}\\
   \midrule 
-  T & Test\\
+  A & Assumption\\
+  DD & Data Definition\\
+  GD & General Definition\\
+  GS & Goal Statement\\
+  IM & Instance Model\\
+  LC & Likely Change\\
+  PS & Physical System Description\\
+  R & Requirement\\
+   T & Theoretical Model\\
+  SRS & Software Requirements Specification\\
+ EEGSourceLocalizer & Electroencephalogram Source Localization Software\\ 
+ %\plt{put an expanded version of your program name here (as appropriate)}\\
+  EEG & Electroencephalogram \\
+  BCI & Brain-Computer Interface\\
+  SL & Source Localization \\
+  LCMV & Linearly Constraint Minimum Variance \\
+  DICS & Dynamic Imaging of Coherent Sources\\
+
   \bottomrule
 \end{tabular}\\
 
-\wss{symbols, abbreviations or acronyms -- you can simply reference the SRS
-  \citep{SRS} tables, if appropriate}
 
 \newpage
 
 \pagenumbering{arabic}
 
-This document ... \wss{provide an introductory blurb and roadmap of the
-  Verification and Validation plan}
+This document provides an introductory blurb and roadmap of the Verification and 
+Validation (VnV) plan for \progname{}. The purpose of the VnV Plan is to identify the activities that will establish compliance with the requirements (verification) and to establish that the system will meet the design purpose (validation). The general information is introduced in section 3.  Verification plans and test description are in section 4 and section 5, respectively. 
+
 
 \section{General Information}
 
 \subsection{Summary}
 
-\wss{Say what software is being tested.  Give its name and a brief overview of
-  its general functions.}
+%\wss{Say what software is being tested.  Give its name and a brief overview of
+%  its general functions.}
+
+\progname software is going to be tested by this VnV plan. This software is designed estimate the activity of every voxel of the brain in time based on the electric potentials recorded from the scalp in the form of EEG signals by means of source localization (SL) algorithms. This document specifies verification methods  that the system requirements have been fulfilled (whether the system was built right) as well as validation plan that the developed system effectively achieves its intended purpose (was the right system built). 
 
 \subsection{Objectives}
 
-\wss{State what is intended to be accomplished.  The objective will be around
-  the qualities that are most important for your project.  You might have
-  something like: ``build confidence in the software correctness,''
-  ``demonstrate adequate usability.'' etc.  You won't list all of the qualities,
-  just those that are most important.}
+The purpose of the validation plan is to define how system validation will be performed at the end of the project—the strategy that will be used to assess whether the developed system accomplishes what it was designed to do. This essentially implies assessing whether the system meets the goals, objectives, and user needs stated at the beginning of the project which is in case of scientific computing softwares it is usually done based on real-world data. \\ 
+
+Also, the verification plan  includes test strategies, definitions of what will be tested, and a test matrix with detailed mapping connecting the testing performed to the system requirements. This verification plan ensures that all requirements specified in the System Requirements (SRS) document have been met and reviewed. Specific goals of this document are to build confidence in the software correctness and demonstrate adequate usability.
+
+The 2 criteria that differ among SL techniques are the "accuracy" and "complexity". We generally want to improve accuracy while the complexity level of the solution does not increase significantly and this creates a a trade-off problem. In this software, by controlling for the complexity factor by choosing the algorithms and considering several assumptions and the most important objective is to acquire exact activity of the brain sources. Thus, the verification and validation plan is mostly build around this idea.
+
+%\wss{State what is intended to be accomplished.  The objective will be around
+%  the qualities that are most important for your project.  You might have
+%  something like: ``build confidence in the software correctness,''
+%  ``demonstrate adequate usability.'' etc.  You won't list all of the qualities,
+%  just those that are most important.}
 
 \subsection{Relevant Documentation}
 
-\wss{Reference relevant documentation.  This will definitely include your SRS
-  and your other project documents (MG, MIS, etc)}
+%\wss{Reference relevant documentation.  This will definitely include your SRS
+%  and your other project documents (MG, MIS, etc)}
+System requirement specification of the \progname software are provided in this document:
+\begin{itemize}
+	\item 
+	\href{https://github.com/LeilaMousapour/Brain-Computer-Interface-/blob/master/docs/SRS/SRS.pdf}{SRS} 
+	for \progname{}
+\end{itemize}
 
-\citet{SRS}
+%\citet{SRS}
 
 \section{Plan}
 	
 \subsection{Verification and Validation Team}
 
-\wss{You, your classmates and the course instructor.  Maybe your supervisor.}
-
+%\wss{You, your classmates and the course instructor.  Maybe your supervisor.}
+\begin{itemize}
+	\item Leila Mousapour (Developer and Domain Expert)
+	\item Dr. Spencer Smith (Domain Expert)
+	\item Gabriela Sánchez Díaz (Domain Expert)
+	\item Shayan Mousavi Masouleh (Secondary Reviewer)
+	\item Naveen Ganesh Muralidharan (Secondary Reviewer)
+	\item Siddharth Shinde (Secondary Reviewer)
+\end{itemize}
+	
 \subsection{SRS Verification Plan}
 
-\wss{List any approaches you intend to use for SRS verification.  This may just
-  be ad hoc feedback from reviewers, like your classmates, or you may have
-  something more rigorous/systematic in mind..}
+The SRS document will be verified through static technique of document inspection. Therefore, reviewers including Dr. Smith, the "scientific software development" course instructor and other classmates from the class. Reviewers can give feedbacks and revision suggestions to the author by creating issues on GitHub. It is author’s responsibility to check the submitted issues regularly and make necessary revisions. The reviewers will assess this document based on the \href{https://gitlab.cas.mcmaster.ca/smiths/cas741/-/blob/master/BlankProjectTemplate/docs/SRS/SRS-Checklist.pdf}{SRS check list}, designed by Dr. Smith.
+
+%\wss{List any approaches you intend to use for SRS verification.  This may just
+%  be ad hoc feedback from reviewers, like your classmates, or you may have
+%  something more rigorous/systematic in mind..}
 
 \subsection{Design Verification Plan}
 
-\wss{Plans for design verification}
+The design documents, including the module guide (MG) and module interface specification (MIS) will be verified through static technique of document inspection. Therefore, reviewers including Dr. Smith, the "scientific software development" course instructor and other classmates from the class. Reviewers can give feedbacks and revision suggestions to the author by creating issues on GitHub. It is author’s responsibility to check the submitted issues regularly and make necessary revisions. The reviewers will assess this document based on the \href{https://gitlab.cas.mcmaster.ca/smiths/cas741/-/blob/master/BlankProjectTemplate/docs/Design/MG/MG-Checklist.pdf}{MG check list} and the \href{https://gitlab.cas.mcmaster.ca/smiths/cas741/-/blob/master/BlankProjectTemplate/docs/Design/MIS/MIS-Checklist.pdf}{MG check list},, designed by Dr. Smith.
+
+%\wss{Plans for design verification}
 
 \subsection{Implementation Verification Plan}
 
-\wss{You should at least point to the tests listed in this document and the unit
-  testing plan.}
+\progname{} will be verified using several types of dynamic and static testing as follow:
 
-\wss{In this section you would also give any details of any plans for static verification of
-  the implementation.  Potential techniques include code walkthroughs, code
-  inspection, static analyzers, etc.}
+\begin{itemize}
+\item Dynamic testing for system verification: for this we use approaches including:
+	\begin{enumerate} 
+	\item Test cases using EEG data which the expected output of SL is known: for example using simultaneous EEG/fMRI datasets which the expected sources for the EEG source localization are known based on the fMRI images.
+	\item Methods of manufactured solution: this is the simplest and the first test for verification of the implementation which we synthesis EEG data from 1 or multiple dipoles using the head model (forward model) and then we feed the synthesized EEG from the known sources to the code. We know what the answer is as we manufactured it and we can confirm if the software is working.
+	\item Parallel testing: \href{https://neuroimage.usc.edu/brainstorm/Introduction} {"Brainstorm"} software which is an open source MATLAB software can perform EEG source localization with different techniques. Thus, the result of obtained from \progname{} can be compared again the Brainstorm pseudo-oracle.
+	\end{enumerate}
+	
+\item Static testing for system verification: 
+	\begin{enumerate} 
+	\item Code Walkthrough: The developer would walk an audience through the code slowly and explain every part of the code so that if there is a mistake, especially a logical error due to the steps taken for SL implementation will be discovered. The candidate audience for the code walkthrough would  be the undergraduate student who is helping on this project. 
+	\end{enumerate}
+	
+\item Dynamic testing for unit verification: \\
+All modules are to be unit tested to ensure correctness, dynamic unit test will be carried out. The \href{https://www.mathworks.com/help/matlab/matlab_prog/ways-to-write-unit-tests.html}{MATLAB® unit testing framework} supports three test authoring schemes:
+
+\begin{itemize}
+\item Script-based unit tests: Write each unit test as a separate section of a test script file. We can perform basic qualifications, access the diagnostics that the framework records on test results, refine the test suite by selecting the tests we want to run, and customize the test run by creating and configuring a TestRunner object.
+\item Function-based unit tests: Write each unit test as a local function within a test function file. Function-based tests subscribe to the xUnit testing philosophy. In addition to supporting the functionality provided by script-based tests, function-based tests give we access to a rich set of test authoring features. 
+
+\item Class-based unit tests: Write each unit test as a Test method within a class definition file. In addition to supporting the functionality provided by script-based and function-based tests, class-based tests provide you with several advanced test authoring features and give we access to the full framework functionality.  
+\end{itemize}
+
+Script-based unit testing will be used for unit verification of this software. more details of unit testing can be found in the Unit Testing Plan.
+\end{itemize}
+
+
+%\wss{You should at least point to the tests listed in this document and the unit
+%  testing plan.}
+%
+%\wss{In this section you would also give any details of any plans for static 
+%verification of
+%  the implementation.  Potential techniques include code walkthroughs, code
+%  inspection, static analyzers, etc.}
 
 \subsection{Software Validation Plan}
 
-\wss{If there is any external data that can be used for validation, you should
-  point to it here.  If there are no plans for validation, you should state that
-  here.}
+In scientific software development, validation is referred to testing the software with a real-world experiment data and investigate if the mathematical modelling, assumptions etc. are valid for this real-world problem. In the beginning of 2020, there was a dataset published in Nature journal under the name of "Simultaneous human intracerebral stimulation and HD-EEG, ground-truth for source localization methods"  that comprises EEG recorded electrical activity originating from precisely known locations inside the brain of living humans \cite{Mikulan2020} . High-density EEG was recorded as single-pulse biphasic currents were delivered at intensities ranging from 0.1 to 5 mA through stereotactically implanted electrodes in diverse brain regions during pre-surgical evaluation of patients with drug-resistant epilepsy. Thus, this dataset can be use as a test for validation as well as verification for the software.\\
+%\wss{If there is any external data that can be used for validation, you should
+%  point to it here.  If there are no plans for validation, you should state that
+%  here.}
 
 \section{System Test Description}
 	
 \subsection{Tests for Functional Requirements}
 
-\wss{Subsets of the tests may be in related, so this section is divided into
-  different areas.  If there are no identifiable subsets for the tests, this
-  level of document structure can be removed.}
+The functional requirements stated in the SRS document can be categorized in two main sections: FRs related to inputs (R2 and R3) and FRs related to outputs of the \progname{} software. Thus, the FR test is explained in two areas below.
 
-\wss{Include a blurb here to explain why the subsections below
-  cover the requirements.  References to the SRS would be good.}
+%\wss{Subsets of the tests may be in related, so this section is divided into
+%  different areas.  If there are no identifiable subsets for the tests, this
+%  level of document structure can be removed.}
+%
+%\wss{Include a blurb here to explain why the subsections below
+%  cover the requirements.  References to the SRS would be good.}
 
-\subsubsection{Area of Testing1}
+\subsubsection{Area of Input Testing}
 
-\wss{It would be nice to have a blurb here to explain why the subsections below
-  cover the requirements.  References to the SRS would be good.  If a section
-  covers tests for input constraints, you should reference the data constraints
-  table in the SRS.}
-		
-\paragraph{Title for Test}
+As described in the section 4.2.6 in SRS, \progname{}  shall verify whether the inputs meet the data constraints (R2). Frequency component of the EEG data should be checked to see if the data is band-pass filtered. Also, \progname{}  should ask the user to confirm if the artifact removal has been done. Also, \progname{} shall verify that the covariance matrix of the input data is not rank-deficient (R3). An error message shall be displayed if input data is invalid.\\
+These 2 requirements will be tested by test case provided below.
+
+%\wss{It would be nice to have a blurb here to explain why the subsections below
+%  cover the requirements.  References to the SRS would be good.  If a section
+%  covers tests for input constraints, you should reference the data constraints
+%  table in the SRS.}
+
+\paragraph{Input validation check}
 
 \begin{enumerate}
 
-\item{test-id1\\}
+\item{test-input\\}
 
-Control: Manual versus Automatic
+Control: Automatic
 					
-Initial State: 
-					
-Input: 
-					
-Output: \wss{The expected result for the given inputs}
+Input: Any raw EEG signal which was sampled at 512 Hz.					
+Output: The expected output for this data is an error message as the Welch power spectrum would be calculated and the power would be checked to see if it contains frequencies more than 100Hz and lower than 0.05 Hz
+%\wss{The expected result for the given inputs}
 
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
-					
-How test will be performed: 
-					
-\item{test-id2\\}
+Test Case Derivation:  The frequency spectrum of the raw data depends on the sampling frequency and when it is sampled at 512 Hz, it contains over-range frequencies when it is not band-pass filtered yet. Thus it contains frequencies more than 100Hz and lower than 0.05 Hz.
 
-Control: Manual versus Automatic
 					
-Initial State: 
+How test will be performed: Write a script to automatically feed the raw EEG data in the code and test it.
 					
-Input: 
-					
-Output: \wss{The expected result for the given inputs}
+\item{test-rank\\}
 
-Test Case Derivation: \wss{Justify the expected value given in the Output field}
+Control: Automatic
+					
+Input: Matrix 
+\[
+\begin{bmatrix}
+1 & 0 & 1\\
+-2 & -3 & 1\\
+3 & 3 & 0
+\end{bmatrix} 
+\]
 
-How test will be performed: 
+would be fed as EEG signal
+					
+Output: The expected output for this data is an error message 
+%\wss{The expected result for the given inputs}
+
+Test Case Derivation: The matrix above has the rand 2 while the full rank is 3 so it is rank deficients and can be used as test case.
+
+How test will be performed: Write a script to automatically feed the rank deficiend raw EEG data in the code and test it.
 
 \end{enumerate}
 
-\subsubsection{Area of Testing2}
 
-...
+
+\subsubsection{Area of Output Testing}
+
+As described in the section 4.2.6 in SRS, \progname{}  shall perform the correct calculation and plot the result (R4 and R5). In other words, this software should calculated the correct sources. These 2 requirements will be tested by test case provided below.\\
+
+\begin{enumerate}
+\item{test-SimulatedEEG\\}
+
+Control: Mixed manual and automatic
+					
+Input: EEG data simulated from one and three dipoles in known locations (we set coordination of the source in the head model) with known activity and known added noise.
+					
+Output: The expected output is the \progname{} generates a matrix of source time series and plot of the brain activity map in the same locations as the locations we set for the simulating the EEG data.
+%\wss{The expected result for the given inputs}
+
+Test Case Derivation: 
+
+How test will be performed: We will manually obtain the source time series from the Brainstorm software and then, s test script would compare the norm of the difference between this software's output and the Brainstorm software output. Finally, a relative error would be calculated and reported.\\
+Also, we will plot the source activity maps in Brainstorm and also we plot the output of the software for the BCI iv competition EEG data and the correctness can be manually judged by eyes. 
+
+
+\item{test-Brainstorm-PseudoOracle\\}
+
+Control: Automatic
+					
+Input: EEG data for BCI IV competition dataset \cite{dataset1BCIcompetitionIV} to software and to the Brainstorm software as pseudo-oracle. 
+
+Output: The expected output is the \progname{} generates a matrix of source time series and a plot of the brain activity map in the same locations as the Brainstorm software would.
+%\wss{The expected result for the given inputs}
+
+Test Case Derivation: The matrix above has the rand 2 while the full rank is 3 so it is rank deficients and can be used as test case.
+
+How test will be performed: A test script would simulate the EEG data for the location and amplitude of the current dipoles (sources) and then it will feed this data to the code and obtain the coordination of the most active sources based on the averaged power over time. Finally, the norm of the difference between the known coordination and software output will be calculated and reported. it will be judged against the resolution of the source map (the brain voxel size).\\
+ Also, this script will plot the dipoles from which we simulate the EEG data and also we plot the output of the software for the simulated EEG data and it can be manually judged by eyes. 
+
+
+\end{enumerate}
+
+
+
+
+
 
 \subsection{Tests for Nonfunctional Requirements}
 
-\wss{The nonfunctional requirements for accuracy will likely just reference the
-  appropriate functional tests from above.  The test cases should mention
-  reporting the relative error for these tests.}
+The \progname{} software has a nonfunctional requirements regarding accuracy (NFR1). The accuracy for the computed solution should meet the level of accuracy achieved by other commercial softwares which here we only compare it with Brainstorm. The test would be done just same as section 5.1.2, test-Brainstorm-PseudoOracle. 
 
-\wss{Tests related to usability could include conducting a usability test and
-  survey.}
-
-\subsubsection{Area of Testing1}
-		
-\paragraph{Title for Test}
-
-\begin{enumerate}
-
-\item{test-id1\\}
-
-Type: 
-					
-Initial State: 
-					
-Input/Condition: 
-					
-Output/Result: 
-					
-How test will be performed: 
-					
-\item{test-id2\\}
-
-Type: Functional, Dynamic, Manual, Static etc.
-					
-Initial State: 
-					
-Input: 
-					
-Output: 
-					
-How test will be performed: 
-
-\end{enumerate}
-
-\subsubsection{Area of Testing2}
-
-...
+%\wss{The nonfunctional requirements for accuracy will likely just reference the
+%  appropriate functional tests from above.  The test cases should mention
+%  reporting the relative error for these tests.}
+%
+%\wss{Tests related to usability could include conducting a usability test and
+%  survey.}
+%
+%\subsubsection{Area of Testing1}
+%		
+%\paragraph{Title for Test}
+%
+%\begin{enumerate}
+%
+%\item{test-id1\\}
+%
+%Type: 
+%					
+%Initial State: 
+%					
+%Input/Condition: 
+%					
+%Output/Result: 
+%					
+%How test will be performed: 
+%					
+%\item{test-id2\\}
+%
+%Type: Functional, Dynamic, Manual, Static etc.
+%					
+%Initial State: 
+%					
+%Input: 
+%					
+%Output: 
+%					
+%How test will be performed: 
+%
+%\end{enumerate}
+%
+%\subsubsection{Area of Testing2}
+%
+%...
 
 \subsection{Traceability Between Test Cases and Requirements}
 
-\wss{Provide a table that shows which test cases are supporting which
-  requirements.}
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|c|}
+		\hline        
+		& R1 & R2 & R3 & R4 & R5 & NR1 \\
+		\hline
+		Test-input        &X & & & & & \\ \hline
+		test-rank        & &X & & & &  \\ \hline
+		test-SimulatedEEG        & & &X & X& & \\ \hline
+		test-BrainstormPsudoOracle        & & & &X & X& X \\ \hline
+		test-GroundTruthData        & & & &X & X& X \\ \hline
+
+	\end{tabular}
+\caption{Traceability Matrix Showing the Connections Between Tests and Functional and Nonfunctional System Requirements}
+\label{Table:A_trace}
+\end{table}
 				
 \bibliographystyle{plainnat}
 
 \bibliography{../../../refs/References}
 
-\newpage
-
-\section{Appendix}
-
-This is where you can place additional information.
-
-\subsection{Symbolic Parameters}
-
-The definition of the test cases will call for SYMBOLIC\_CONSTANTS.
-Their values are defined in this section for easy maintenance.
-
-\subsection{Usability Survey Questions?}
-
-\wss{This is a section that would be appropriate for some projects.}
+%\newpage
+%
+%\section{Appendix}
+%
+%This is where you can place additional information.
+%
+%\subsection{Symbolic Parameters}
+%
+%The definition of the test cases will call for SYMBOLIC\_CONSTANTS.
+%Their values are defined in this section for easy maintenance.
+%
+%\subsection{Usability Survey Questions?}
+%
+%\wss{This is a section that would be appropriate for some projects.}
 
 \end{document}
