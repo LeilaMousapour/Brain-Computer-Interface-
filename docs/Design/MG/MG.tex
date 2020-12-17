@@ -30,11 +30,12 @@
 \newcounter{mnum}
 \newcommand{\mthemnum}{M\themnum}
 \newcommand{\mref}[1]{M\ref{#1}}
+\renewcommand{\progname}{EEGSourceLocalizer} 
 
 \begin{document}
 
 \title{Module Guide for \progname{}} 
-\author{Author Name}
+\author{Leila Mousapour}
 \date{\today}
 
 \maketitle
@@ -46,8 +47,7 @@
 \begin{tabularx}{\textwidth}{p{3cm}p{2cm}X}
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
-Date 1 & 1.0 & Notes\\
-Date 2 & 1.1 & Notes\\
+ 10 Dec 2020 & 1.0 & Frist version\\
 \bottomrule
 \end{tabularx}
 
@@ -71,10 +71,12 @@ This section records information for easy reference.
   OS & Operating System \\
   R & Requirement\\
   SC & Scientific Computing \\
-  SRS & Software Requirements Specification\\
-  \progname & Explanation of program name\\
   UC & Unlikely Change \\
-  \wss{etc.} & \wss{...}\\
+  SL & Source Localization\\
+  SRS & Software Requirements Specification\\
+  \progname & EEG Source Localization Software\\
+
+%  \wss{etc.} & \wss{...}\\
   \bottomrule
 \end{tabular}\\
 
@@ -157,12 +159,22 @@ adapted here is called design for
 change.
 
 \begin{description}
-\item[\refstepcounter{acnum} \actheacnum \label{acHardware}:] The specific
+\item[\refstepcounter{acnum} \actheacnum \label{acHW}:] The specific
   hardware on which the software is running.
 \item[\refstepcounter{acnum} \actheacnum \label{acInput}:] The format of the
   initial input data.
-\item ...
-\end{description}
+\item[\refstepcounter{acnum} \actheacnum \label{acSpec}:] The specification parameters.
+\item[\refstepcounter{acnum} \actheacnum \label{acCov}:]  The algorithm used to calculate the covariance of the EEG data.
+ \item[\refstepcounter{acnum} \actheacnum \label{acHM}:] The method of creating the head model (which currently is Boundary Element Method (BEM) and the parameters (conductivity of the brain tissues).
+ \item[\refstepcounter{acnum} \actheacnum \label{acLF}:] The source model parameters can change (the resolution of the brain segmentation, the distribution of dipoles etc.).
+ \item[\refstepcounter{acnum} \actheacnum \label{acSL}:] The algorithm used to perform source localization.
+\item[\refstepcounter{acnum} \actheacnum \label{acPlot}:] The method of plotting (plot the source power map on a 3D brain surface or sliced MRI etc.).
+\item[\refstepcounter{acnum} \actheacnum \label{acOutput}:] The format of the final output data.
+\item[\refstepcounter{acnum} \actheacnum \label{acControl}:] The flow of main program.
+\item[\refstepcounter{acnum} \actheacnum \label{acDS}:] The choice of  data structures used for storing and manipulating the data.
+\item[\refstepcounter{acnum} \actheacnum \label{acAlg}:] The choice of MATLAB built-in algorithms and toolboxes used in the software. 
+ 
+ \end{description}
 
 \subsection{Unlikely Changes} \label{SecUchange}
 
@@ -176,7 +188,8 @@ decisions will be changed.
 \begin{description}
 \item[\refstepcounter{ucnum} \uctheucnum \label{ucIO}:] Input/Output devices
   (Input: File and/or Keyboard, Output: File, Memory, and/or Screen).
-\item ...
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucSM}:] Average refereeing EEG data will not be included in this software. (it is required for EEG data to be re-referenced against the average of all the electrodes (AG) when intended to be used in source localization).
+\item[\refstepcounter{ucnum} \uctheucnum \label{ucSM}:] The source model would be the whole brain volume and this software will not include cortical surface (cortical sheet) source model.
 \end{description}
 
 \section{Module Hierarchy} \label{SecMH}
@@ -184,11 +197,22 @@ decisions will be changed.
 This section provides an overview of the module design. Modules are summarized
 in a hierarchy decomposed by secrets in Table \ref{TblMH}. The modules listed
 below, which are leaves in the hierarchy tree, are the modules that will
-actually be implemented.
+actually be implemented (Not including the software decision modules).
 
 \begin{description}
 \item [\refstepcounter{mnum} \mthemnum \label{mHH}:] Hardware-Hiding Module
-\item ...
+\item [\refstepcounter{mnum} \mthemnum \label{mIP}:] Input Parameters Module
+\item [\refstepcounter{mnum} \mthemnum \label{mOP}:] Output Format Module
+\item [\refstepcounter{mnum} \mthemnum \label{mP}:] Plotting Module
+\item [\refstepcounter{mnum} \mthemnum \label{mCov}:]  Covariance Calculator Module
+\item [\refstepcounter{mnum} \mthemnum \label{mHM}:] Head Model Module
+\item [\refstepcounter{mnum} \mthemnum \label{mLF}:] Lead Filed Module
+\item [\refstepcounter{mnum} \mthemnum \label{mSL}:] Source Localization Module
+\item [\refstepcounter{mnum} \mthemnum \label{mCtrl}:] Control Module
+\item [\refstepcounter{mnum} \mthemnum \label{mSpec}:] Specification Parameters Module
+\item [\refstepcounter{mnum} \mthemnum \label{mAlg}:] Various Algorithems Module
+\item [\refstepcounter{mnum} \mthemnum \label{mDS}:] Data Structure Module
+
 \end{description}
 
 
@@ -199,22 +223,23 @@ actually be implemented.
 \textbf{Level 1} & \textbf{Level 2}\\
 \midrule
 
-{Hardware-Hiding Module} & ~ \\
+{Hardware-Hiding} & ~ \\
 \midrule
 
-\multirow{7}{0.3\textwidth}{Behaviour-Hiding Module} & ?\\
-& ?\\
-& ?\\
-& ?\\
-& ?\\
-& ?\\
-& ?\\ 
-& ?\\
+\multirow{7}{0.3\textwidth}{Behaviour-Hiding} & Input Parameters\\
+& Output Format\\
+& Plotting \\
+& Covariance Calculator\\
+& Head Model\\
+& Lead Filed\\
+& Source Localization\\ 
+& Control Module\\
+& Specification Parameters Module\\
 \midrule
 
-\multirow{3}{0.3\textwidth}{Software Decision Module} & {?}\\
-& ?\\
-& ?\\
+\multirow{3}{0.3\textwidth}{Software Decision} & {Matrix/Cell/Structure built-in MATLAB Data Structures}\\
+& Various built-in MATLAB and Fieldtrip toolbox algorithms\\
+& Plotting\\
 \bottomrule
 
 \end{tabular}
@@ -222,20 +247,21 @@ actually be implemented.
 \label{TblMH}
 \end{table}
 
+
 \section{Connection Between Requirements and Design} \label{SecConnection}
 
 The design of the system is intended to satisfy the requirements developed in
 the SRS. In this stage, the system is decomposed into modules. The connection
 between requirements and modules is listed in Table \ref{TblRT}.
 
-\wss{The intention of this section is to document decisions that are made
-  ``between'' the requirements and the design.  To satisfy some requirements,
-  design decisions need to be made.  Rather than make these decisions implicit,
-  they are explicitly recorded here.  For instance, if a program has security
-  requirements, a specific design decision may be made to satisfy those
-  requirements with a password.  In scientific examples, the choice of algorithm
-could potentially go here, if that is a decision that is exposed by the
-interface.}
+%\wss{The intention of this section is to document decisions that are made
+%  ``between'' the requirements and the design.  To satisfy some requirements,
+%  design decisions need to be made.  Rather than make these decisions implicit,
+%  they are explicitly recorded here.  For instance, if a program has security
+%  requirements, a specific design decision may be made to satisfy those
+%  requirements with a password.  In scientific examples, the choice of algorithm
+%could potentially go here, if that is a decision that is exposed by the
+%interface.}
 
 \section{Module Decomposition} \label{SecMD}
 
@@ -276,16 +302,80 @@ to be implemented.
 \item[Implemented By:] --
 \end{description}
 
-\subsubsection{Input Format Module (\mref{mInput})}
+\subsubsection{Input Parameter Module (\mref{mIP})}
 
 \begin{description}
 \item[Secrets:]The format and structure of the input data.
 \item[Services:]Converts the input data into the data structure used by the
-  input parameters module.
-\item[Implemented By:] [Your Program Name Here]
+other modules and check if the conditions are met.
+\item[Implemented By:] \progname{}
 \end{description}
 
-\subsubsection{Etc.}
+\subsubsection{Output Format Module (\mref{mOP})}
+
+\begin{description}
+\item[Secrets:]The format and structure of the output data.
+\item[Services:]Converts the output results into the data structure used by the
+  input parameters module and check if the conditions are met.
+\item[Implemented By:] \progname{}
+\end{description}
+
+
+\subsubsection{Plotting Module (\mref{mP})}
+
+\begin{description}
+\item[Secrets:]The format and style of plotting the output source power.
+\item[Services:] Slice the MRI image provided by the user and interpolate the power computed for every source point and plot the power on the sliced MRI image.
+\item[Implemented By:] \progname{}
+\end{description}
+
+\subsubsection{Covariance Calculator Module(\mref{mCov})}
+
+\begin{description}
+\item[Secrets:]The algorithm used to compute the covariance of the EEG data.
+\item[Services:] Computes the covariance of the averaged EEG data (averaged over all trials) which will be used in source localization phase.
+\item[Implemented By:] \progname{}
+\end{description}
+
+\subsubsection{Head Model Module (\mref{mHM})}
+
+\begin{description}
+\item[Secrets:]The algorithm used to create the head model.
+\item[Services:] Take the MRI and segment it to find the boundaries between the 3 tissues types: skull, scalp and brain with Boundary Element Method (BEM). Finally, creates a head model based on these 3 surfaces and the corresponding tissue conductivity.
+\item[Implemented By:] \progname{}
+\end{description}
+
+\subsubsection{Lead Field Module (\mref{mLF})}
+
+\begin{description}
+\item[Secrets:]The source distribution and algorithm used to calculate the forward solution.
+\item[Services:] It first align the electrodes with the head model and then generates the source model (a structure containing the location of the sources by segmenting brain volume which its boundary is in the head model structure). Afterwards, it computes the forward model for all the dipole locations of the 3D source model.
+\item[Implemented By:] \progname{}
+\end{description}
+
+\subsubsection{Source Localization Module (\mref{mSL})}
+
+\begin{description}
+\item[Secrets:]The source distribution and 
+\item[Services:] It first generates the source model (a structure containing the location of the sources by segmenting brain volume which its boundary is in the head model structure). Afterwards, it computes the forward model for all the dipole locations of the 3D source model.
+\item[Implemented By:] \progname{}
+\end{description}
+
+\subsubsection{Control Module (\mref{mCtrl})}
+
+\begin{description}
+\item[Secrets:]Execution flow of \progname{}
+\item[Services:] The main module of the software where it calls the different modules in the appropriate order from getting inputs to calculating outputs and plotting the results.
+\item[Implemented By:] \progname{}
+\end{description}
+
+\subsubsection{Specification Parameter Module (\mref{mSpec})}
+
+\begin{description}
+\item[Secrets:] The constant values used in the code.
+\item[Services:] Stores all the constant values, including values mention in the table of specification parameters in the SRS document (constraints and conditions on the input/output values, other configurations and hyper parameters for different modules etc.), for being called where needed at different modules.
+\item[Implemented By:] \progname{}
+\end{description}
 
 
 \subsection{Software Decision Module}
@@ -301,7 +391,22 @@ to be implemented.
 \item[Implemented By:] --
 \end{description}
 
-\subsubsection{Etc.}
+\subsubsection{Various Algorithms Module (\mref{mAlg})}
+\begin{description}
+\item[Secrets:] The choice of algorithm and what implementation to use (built-in MATLAB or external toolboxes)
+\item[Services:] As there are several algorithms used in this software (including the covariance calculation, LCMV, BEM etc.), we are not specifying them separately. However, for each of these algorithms we need to determine in this document that what implementation is used in this software: For all the algorithms needed in the \progname{}, we have used the \href{https://www.fieldtriptoolbox.org} {"Fieldtrip"} toolbox implementation  . 
+\item[Implemented By:] \href{https://www.fieldtriptoolbox.org} {Fieldtrip} 
+\end{description}
+
+\subsubsection{Data Structure Module (\mref{mDS})}
+\begin{description}
+\item[Secrets:] The choice of data types for all the parameters
+\item[Services:] Appropriately storing different values across the software. MATLAB built-in data structures including matrix, cell and structure are used.
+
+\item[Implemented By:] \href{https://www.mathworks.com/products/matlab.html}{MATLAB}
+\end{description}
+
+
 
 \section{Traceability Matrix} \label{SecTM}
 
@@ -316,17 +421,12 @@ requirements and between the modules and the anticipated changes.
 \toprule
 \textbf{Req.} & \textbf{Modules}\\
 \midrule
-R1 & \mref{mHH}, \mref{mInput}, \mref{mParams}, \mref{mControl}\\
-R2 & \mref{mInput}, \mref{mParams}\\
-R3 & \mref{mVerify}\\
-R4 & \mref{mOutput}, \mref{mControl}\\
-R5 & \mref{mOutput}, \mref{mODEs}, \mref{mControl}, \mref{mSeqDS}, \mref{mSolver}, \mref{mPlot}\\
-R6 & \mref{mOutput}, \mref{mODEs}, \mref{mControl}, \mref{mSeqDS}, \mref{mSolver}, \mref{mPlot}\\
-R7 & \mref{mOutput}, \mref{mEnergy}, \mref{mControl}, \mref{mSeqDS}, \mref{mPlot}\\
-R8 & \mref{mOutput}, \mref{mEnergy}, \mref{mControl}, \mref{mSeqDS}, \mref{mPlot}\\
-R9 & \mref{mVerifyOut}\\
-R10 & \mref{mOutput}, \mref{mODEs}, \mref{mControl}\\
-R11 & \mref{mOutput}, \mref{mODEs}, \mref{mEnergy}, \mref{mControl}\\
+R1 & \mref{mHH}, \mref{mIP}, \mref{mCtrl}\\
+R2 & \mref{mIP}, \mref{mSpec}, \mref{mCtrl}\\
+R3 & \mref{mCov}, \mref{mIP}, \mref{mCtrl}\\
+R4 & \mref{mHM}, \mref{mCov}, \mref{mLF}, \mref{mSL}, \mref{mCtrl}\\
+R5 & \mref{mOP}, \mref{mP}, \mref{mSpec}, \mref{mCtrl}\\
+
 \bottomrule
 \end{tabular}
 \caption{Trace Between Requirements and Modules}
@@ -339,18 +439,19 @@ R11 & \mref{mOutput}, \mref{mODEs}, \mref{mEnergy}, \mref{mControl}\\
 \toprule
 \textbf{AC} & \textbf{Modules}\\
 \midrule
-\acref{acHardware} & \mref{mHH}\\
-\acref{acInput} & \mref{mInput}\\
-\acref{acParams} & \mref{mParams}\\
-\acref{acVerify} & \mref{mVerify}\\
-\acref{acOutput} & \mref{mOutput}\\
-\acref{acVerifyOut} & \mref{mVerifyOut}\\
-\acref{acODEs} & \mref{mODEs}\\
-\acref{acEnergy} & \mref{mEnergy}\\
-\acref{acControl} & \mref{mControl}\\
-\acref{acSeqDS} & \mref{mSeqDS}\\
-\acref{acSolver} & \mref{mSolver}\\
-\acref{acPlot} & \mref{mPlot}\\
+\acref{acHW} & \mref{mHH}\\
+\acref{acInput} & \mref{mIP}\\
+\acref{acSpec} & \mref{mSpec}\\
+\acref{acHM} & \mref{mHM}\\
+\acref{acLF} & \mref{mLF}\\
+\acref{acSL} & \mref{mSL}\\
+\acref{acCov} & \mref{mCov}\\
+\acref{acOutput} & \mref{mOP}\\
+\acref{acControl} & \mref{mCtrl}\\
+\acref{acPlot} & \mref{mP}\\
+\acref{acAlg} & \mref{mAlg}\\
+\acref{acDS} & \mref{mDS}\\
+
 \bottomrule
 \end{tabular}
 \caption{Trace Between Anticipated Changes and Modules}
@@ -372,7 +473,7 @@ because they use modules from the lower levels.
 
 \begin{figure}[H]
 \centering
-%\includegraphics[width=0.7\textwidth]{UsesHierarchy.png}
+\includegraphics[width=1\textwidth]{UsesHierarchy.png}
 \caption{Use hierarchy among modules}
 \label{FigUH}
 \end{figure}
