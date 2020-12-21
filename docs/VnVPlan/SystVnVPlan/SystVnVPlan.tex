@@ -5,6 +5,7 @@
 \usepackage{tabularx}
 \usepackage{hyperref}
 \usepackage{siunitx}
+\usepackage{csquotes}
 \hypersetup{
     colorlinks,
     citecolor=blue,
@@ -17,7 +18,7 @@
 \input{../../Comments}
 \input{../../Common}
 
-\renewcommand{\progname}{EEGSourceLocalization} 
+\renewcommand{\progname}{EEGSourceLocalizer} 
 \begin{document}
 
 \title{Project Title: System Verification and Validation Plan for \progname{} Software} 
@@ -34,6 +35,7 @@
 \toprule {\bf Date} & {\bf Version} & {\bf Notes}\\
 \midrule
 Nov 2, 2020 & 1.0 & First version of system VnV plan\\
+Dec 18, 2020 & 2.0 & Revised version based on feedback and issues\\
 \bottomrule
 \end{tabularx}
 
@@ -43,76 +45,42 @@ Nov 2, 2020 & 1.0 & First version of system VnV plan\\
 
 \listoftables
 
-\listoffigures
+%\listoffigures
 
 \newpage
 
 \section{Symbols, Abbreviations and Acronyms}
 
-%\renewcommand{\arraystretch}{1.2}
-%\begin{tabular}{l l} 
-%  \toprule		
-%  \textbf{symbol} & \textbf{description}\\
-%  \midrule 
-%  T & Test\\
-%  \bottomrule
-%\end{tabular}\\
-
-
 %\wss{symbols, abbreviations or acronyms -- you can simply reference the SRS
 %  \citep{SRS} tables, if appropriate}
-\subsection{Symbols}
 
-~\newline
-
-\renewcommand{\arraystretch}{1.2}
-%\begin{table}[ht]
-  \noindent \begin{tabular}{l l l} 
-    \toprule		
-    \textbf{symbol} & \textbf{unit} & \textbf{SI}\\
-    \midrule 
-    \si{\metre} & length & metre\\
-    hz & Frequency	& herts\\
-    \si{\second} & time & second\\
-    \si{\volt} & voltage & volt\\
-    \bottomrule
-  \end{tabular}
-  
-\subsection{Abbreviations and Acronyms}
 ~\newline
 \renewcommand{\arraystretch}{1.2}
 \begin{tabular}{l l} 
-  \toprule		
-  \textbf{symbol} & \textbf{description}\\
-  \midrule 
-  A & Assumption\\
-  DD & Data Definition\\
-  GD & General Definition\\
-  GS & Goal Statement\\
-  IM & Instance Model\\
-  LC & Likely Change\\
-  PS & Physical System Description\\
-  R & Requirement\\
-   T & Theoretical Model\\
-  SRS & Software Requirements Specification\\
- EEGSourceLocalizer & Electroencephalogram Source Localization Software\\ 
- %\plt{put an expanded version of your program name here (as appropriate)}\\
-  EEG & Electroencephalogram \\
-  BCI & Brain-Computer Interface\\
-  SL & Source Localization \\
-  LCMV & Linearly Constraint Minimum Variance \\
-  DICS & Dynamic Imaging of Coherent Sources\\
-
-  \bottomrule
+\toprule		
+\textbf{symbol} & \textbf{description}\\
+\midrule 
+SRS & Software Requirements Specification\\
+VnV & Verification and Validation\\
+VnVP & Verification and Validation Plan\\
+VnVR & Verification and Validation Report\\
+MG& Module Guide\\
+MIS& Module Interface Specification\\
+EEGSourceLocalizer & Electroencephalogram Source Localization Software\\ 
+EEG & Electroencephalogram \\
+BCI & Brain-Computer Interface\\
+SL & Source Localization \\
+\bottomrule
 \end{tabular}\\
+
+For completion, please see SRS Documentation at \url{https://github.com/LeilaMousapour/Brain-Computer-Interface-/ blob/master/docs/SRS/SRS.pdf}
 
 
 \newpage
 
 \pagenumbering{arabic}
 
-This document provides an introductory blurb and roadmap of the Verification and 
-Validation (VnV) plan for \progname{}. The purpose of the VnV Plan is to identify the activities that will establish compliance with the requirements (verification) and to establish that the system will meet the design purpose (validation). The general information is introduced in section 3.  Verification plans and test description are in section 4 and section 5, respectively. 
+This document provides the roadmap of the Verification and Validation (VnV) plan for \progname{}. The purpose of the VnV Plan is to identify the activities that will establish compliance with the requirements (verification) and to establish that the system will meet the design purpose (validation). The general information is introduced in section 3.  Verification plans and test description are in section 4 and section 5, respectively. 
 
 
 \section{General Information}
@@ -122,7 +90,7 @@ Validation (VnV) plan for \progname{}. The purpose of the VnV Plan is to identif
 %\wss{Say what software is being tested.  Give its name and a brief overview of
 %  its general functions.}
 
-\progname software is going to be tested by this VnV plan. This software is designed estimate the activity of every voxel of the brain in time based on the electric potentials recorded from the scalp in the form of EEG signals by means of source localization (SL) algorithms. This document specifies verification methods  that the system requirements have been fulfilled (whether the system was built right) as well as validation plan that the developed system effectively achieves its intended purpose (was the right system built). 
+\progname{} software is going to be tested by this VnV plan. This software is designed estimate the activity of every voxel of the brain in time based on the electric potentials recorded from the scalp in the form of EEG signals by means of source localization (SL) algorithms. This document specifies verification methods  that the system requirements have been fulfilled (whether the system was built right) as well as validation plan that the developed system effectively achieves its intended purpose (was the right system built). 
 
 \subsection{Objectives}
 
@@ -142,11 +110,12 @@ The 2 criteria that differ among SL techniques are the "accuracy" and "complexit
 
 %\wss{Reference relevant documentation.  This will definitely include your SRS
 %  and your other project documents (MG, MIS, etc)}
-System requirement specification of the \progname software are provided in this document:
-\begin{itemize}
-	\item 
-	\href{https://github.com/LeilaMousapour/Brain-Computer-Interface-/blob/master/docs/SRS/SRS.pdf}{SRS} 
-	for \progname{}
+All the documents for the \progname{} software are provided in following list and can be accessed in the \href{https://github.com/LeilaMousapour/Brain-Computer-Interface-}{Github repository} of the software
+\begin{itemize} 
+	\item \href{https://github.com/LeilaMousapour/Brain-Computer-Interface-/blob/master/docs/SRS/SRS.pdf}{SRS} for \progname{}
+	\item \href{https://github.com/LeilaMousapour/Brain-Computer-Interface-/tree/master/docs/Design}{MG and MIS} design documents for \progname
+	\item \href{https://github.com/LeilaMousapour/Brain-Computer-Interface-/tree/master/docs/VnVReport}{VnVR} for \progname{}
+	
 \end{itemize}
 
 %\citet{SRS}
@@ -167,7 +136,7 @@ System requirement specification of the \progname software are provided in this 
 	
 \subsection{SRS Verification Plan}
 
-The SRS document will be verified through static technique of document inspection. Therefore, reviewers including Dr. Smith, the "scientific software development" course instructor and other classmates from the class. Reviewers can give feedbacks and revision suggestions to the author by creating issues on GitHub. It is author’s responsibility to check the submitted issues regularly and make necessary revisions. The reviewers will assess this document based on the \href{https://gitlab.cas.mcmaster.ca/smiths/cas741/-/blob/master/BlankProjectTemplate/docs/SRS/SRS-Checklist.pdf}{SRS check list}, designed by Dr. Smith.
+The SRS document will be verified through static technique of document inspection. Therefore, reviewers including Dr.\ Smith, the \enquote{Scientific Software Development} course instructor and other classmates from the class will review and inspect the document.\ Reviewers can give feedbacks and revision suggestions to the author by creating issues on GitHub. It is author’s responsibility to check the submitted issues regularly and make necessary revisions. The reviewers will assess this document based on the \href{https://gitlab.cas.mcmaster.ca/smiths/cas741/-/blob/master/BlankProjectTemplate/docs/SRS/SRS-Checklist.pdf}{SRS check list}, designed by Dr.\ Smith.
 
 %\wss{List any approaches you intend to use for SRS verification.  This may just
 %  be ad hoc feedback from reviewers, like your classmates, or you may have
@@ -175,7 +144,7 @@ The SRS document will be verified through static technique of document inspectio
 
 \subsection{Design Verification Plan}
 
-The design documents, including the module guide (MG) and module interface specification (MIS) will be verified through static technique of document inspection. Therefore, reviewers including Dr. Smith, the "scientific software development" course instructor and other classmates from the class. Reviewers can give feedbacks and revision suggestions to the author by creating issues on GitHub. It is author’s responsibility to check the submitted issues regularly and make necessary revisions. The reviewers will assess this document based on the \href{https://gitlab.cas.mcmaster.ca/smiths/cas741/-/blob/master/BlankProjectTemplate/docs/Design/MG/MG-Checklist.pdf}{MG check list} and the \href{https://gitlab.cas.mcmaster.ca/smiths/cas741/-/blob/master/BlankProjectTemplate/docs/Design/MIS/MIS-Checklist.pdf}{MG check list},, designed by Dr. Smith.
+The design documents, including the module guide (MG) and module interface specification (MIS) will be verified through static technique of document inspection. Therefore, reviewers including Dr.\ Smith, the  \enquote{Scientific Software Development}  instructor and other classmates from the class will review and inspect the document.\ Reviewers can give feedbacks and revision suggestions to the author by creating issues on GitHub. It is author’s responsibility to check the submitted issues regularly and make necessary revisions. The reviewers will assess this document based on the \href{https://gitlab.cas.mcmaster.ca/smiths/cas741/-/blob/master/BlankProjectTemplate/docs/Design/MG/MG-Checklist.pdf}{MG check list} and the \href{https://gitlab.cas.mcmaster.ca/smiths/cas741/-/blob/master/BlankProjectTemplate/docs/Design/MIS/MIS-Checklist.pdf}{MIS check list} designed by Dr.\ Smith.
 
 %\wss{Plans for design verification}
 
@@ -184,29 +153,30 @@ The design documents, including the module guide (MG) and module interface speci
 \progname{} will be verified using several types of dynamic and static testing as follow:
 
 \begin{itemize}
-\item Dynamic testing for system verification: for this we use approaches including:
+\item Dynamic testing for system verification: the following approaches are used:
 	\begin{enumerate} 
 	\item Test cases using EEG data which the expected output of SL is known: for example using simultaneous EEG/fMRI datasets which the expected sources for the EEG source localization are known based on the fMRI images.
 	\item Methods of manufactured solution: this is the simplest and the first test for verification of the implementation which we synthesis EEG data from 1 or multiple dipoles using the head model (forward model) and then we feed the synthesized EEG from the known sources to the code. We know what the answer is as we manufactured it and we can confirm if the software is working.
-	\item Parallel testing: \href{https://neuroimage.usc.edu/brainstorm/Introduction} {"Brainstorm"} software which is an open source MATLAB software can perform EEG source localization with different techniques. Thus, the result of obtained from \progname{} can be compared again the Brainstorm pseudo-oracle.
+	\item Parallel testing: \href{https://neuroimage.usc.edu/brainstorm/Introduction} {\enquote{Brainstorm}} software which is an open source MATLAB software can perform EEG source localization with different techniques. Thus, the result of obtained from \progname{} can be compared again the Brainstorm pseudo-oracle.
 	\end{enumerate}
 	
 \item Static testing for system verification: 
-	\begin{enumerate} 
-	\item Code Walkthrough: The developer would walk an audience through the code slowly and explain every part of the code so that if there is a mistake, especially a logical error due to the steps taken for SL implementation will be discovered. The candidate audience for the code walkthrough would  be the undergraduate student who is helping on this project. 
-	\end{enumerate}
+	\begin{itemize} 
+	\item Code Walkthrough: The developer would walk an audience through the code slowly and explain every part of the code so that if there is a mistake, especially a logical error due to the steps taken for SL implementation will be discovered.\ The candidate audience for the code walkthrough would  be the undergraduate student who is helping on this project. \\
+	A meeting will be set with the undergraduate students.\ Before the walkthrough meeting, they will be asked to read through the code and write down questions about the parts that are not clear for them.\ During the meeting, the developer will note down all the defects and issues revealed and finally a review report with a list of findings will be documented to be addressed.\ This review report will be included in the VnVR as well.
+	\end{itemize}
 	
 \item Dynamic testing for unit verification: \\
-All modules are to be unit tested to ensure correctness, dynamic unit test will be carried out. The \href{https://www.mathworks.com/help/matlab/matlab_prog/ways-to-write-unit-tests.html}{MATLAB® unit testing framework} supports three test authoring schemes:
+All modules are to be unit tested to ensure correctness and dynamic unit test will be carried out. The \href{https://www.mathworks.com/help/matlab/matlab_prog/ways-to-write-unit-tests.html}{MATLAB® unit testing framework} supports three test authoring schemes:
 
 \begin{itemize}
-\item Script-based unit tests: Write each unit test as a separate section of a test script file. We can perform basic qualifications, access the diagnostics that the framework records on test results, refine the test suite by selecting the tests we want to run, and customize the test run by creating and configuring a TestRunner object.
-\item Function-based unit tests: Write each unit test as a local function within a test function file. Function-based tests subscribe to the xUnit testing philosophy. In addition to supporting the functionality provided by script-based tests, function-based tests give we access to a rich set of test authoring features. 
+\item Script-based unit tests: Write each unit test as a separate section of a test script file.\ We can perform basic qualifications, access the diagnostics that the framework records on test results, refine the test suite by selecting the tests we want to run, and customize the test run by creating and configuring a TestRunner object.
+\item Function-based unit tests: Write each unit test as a local function within a test function file.\ Function-based tests subscribe to the xUnit testing philosophy.\ In addition to supporting the functionality provided by script-based tests, function-based tests give we access to a rich set of test authoring features. 
 
-\item Class-based unit tests: Write each unit test as a Test method within a class definition file. In addition to supporting the functionality provided by script-based and function-based tests, class-based tests provide you with several advanced test authoring features and give we access to the full framework functionality.  
+\item Class-based unit tests: Write each unit test as a Test method within a class definition file.\ In addition to supporting the functionality provided by script-based and function-based tests, class-based tests provide you with several advanced test authoring features and give we access to the full framework functionality.  
 \end{itemize}
 
-Script-based unit testing will be used for unit verification of this software. more details of unit testing can be found in the Unit Testing Plan.
+Script-based unit testing will be used for unit verification of this software.\ More details on unit testing can be found in the \href{https://github.com/LeilaMousapour/Brain-Computer-Interface-/tree/master/docs/VnVPlan/UnitVnVPlan}{Unit Testing Plan} document.
 \end{itemize}
 
 
@@ -220,7 +190,7 @@ Script-based unit testing will be used for unit verification of this software. m
 
 \subsection{Software Validation Plan}
 
-In scientific software development, validation is referred to testing the software with a real-world experiment data and investigate if the mathematical modelling, assumptions etc. are valid for this real-world problem. In the beginning of 2020, there was a dataset published in Nature journal under the name of "Simultaneous human intracerebral stimulation and HD-EEG, ground-truth for source localization methods"  that comprises EEG recorded electrical activity originating from precisely known locations inside the brain of living humans \cite{Mikulan2020} . High-density EEG was recorded as single-pulse biphasic currents were delivered at intensities ranging from 0.1 to 5 mA through stereotactically implanted electrodes in diverse brain regions during pre-surgical evaluation of patients with drug-resistant epilepsy. Thus, this dataset can be use as a test for validation as well as verification for the software.\\
+In scientific software development, validation is referred to testing the software with a real-world experiment data and investigate if the mathematical modelling, assumptions etc.\ are valid for this real-world problem.\ In the beginning of 2020, a dataset was published in Nature journal under the name of \enquote{Simultaneous human intracerebral stimulation and HD-EEG, ground-truth for source localization methods} that comprises EEG recorded electrical activity originating from precisely known locations inside the brain of living humans \cite{Mikulan2020}.\ High-density EEG was recorded as single-pulse biphasic currents were delivered at intensities ranging from 0.1 to 5 mA through stereotactically implanted electrodes in diverse brain regions during pre-surgical evaluation of patients with drug-resistant epilepsy.\ Thus, this dataset can be use as a test for validation as well as verification for the software.\\
 %\wss{If there is any external data that can be used for validation, you should
 %  point to it here.  If there are no plans for validation, you should state that
 %  here.}
@@ -229,7 +199,7 @@ In scientific software development, validation is referred to testing the softwa
 	
 \subsection{Tests for Functional Requirements}
 
-The functional requirements stated in the SRS document can be categorized in two main sections: FRs related to inputs (R2 and R3) and FRs related to outputs of the \progname{} software. Thus, the FR test is explained in two areas below.
+The functional requirements stated in the SRS document can be categorized in two main sections: FRs related to inputs (R2 and R3) and FRs related to outputs of the \progname{} software.\ Thus, the FR test is explained in two areas below.
 
 %\wss{Subsets of the tests may be in related, so this section is divided into
 %  different areas.  If there are no identifiable subsets for the tests, this
@@ -240,7 +210,7 @@ The functional requirements stated in the SRS document can be categorized in two
 
 \subsubsection{Area of Input Testing}
 
-As described in the section 4.2.6 in SRS, \progname{}  shall verify whether the inputs meet the data constraints (R2). Frequency component of the EEG data should be checked to see if the data is band-pass filtered. Also, \progname{}  should ask the user to confirm if the artifact removal has been done. Also, \progname{} shall verify that the covariance matrix of the input data is not rank-deficient (R3). An error message shall be displayed if input data is invalid.\\
+As described in the section 4.2.6 in SRS, \progname{} shall verify whether the inputs meet the data constraints (R2).\ Frequency component of the EEG data should be checked to see if the data is band-pass filtered.\ Also, \progname{}  should ask the user to confirm if the artifact removal has been done.\ Additionally, \progname{} shall verify that the covariance matrix of the input data is not rank-deficient (R3).\ An error message shall be displayed if input data is invalid.\\
 These 2 requirements will be tested by test case provided below.
 
 %\wss{It would be nice to have a blurb here to explain why the subsections below
@@ -256,7 +226,7 @@ These 2 requirements will be tested by test case provided below.
 
 Control: Automatic
 					
-Input: Any raw EEG signal which was sampled at 512 Hz.					
+Input: Any raw EEG signal which was sampled at 512 Hz.	\\				
 Output: The expected output for this data is an error message as the Welch power spectrum would be calculated and the power would be checked to see if it contains frequencies more than 100Hz and lower than 0.05 Hz
 %\wss{The expected result for the given inputs}
 
@@ -283,9 +253,9 @@ would be fed as EEG signal
 Output: The expected output for this data is an error message 
 %\wss{The expected result for the given inputs}
 
-Test Case Derivation: The matrix above has the rand 2 while the full rank is 3 so it is rank deficients and can be used as test case.
+Test Case Derivation: The matrix above has the rank 2 while the full rank is 3 so it is rank deficients and can be used as test case.
 
-How test will be performed: Write a script to automatically feed the rank deficient raw EEG data in the code and test it.
+How test will be performed: Write a script to automatically feed the rank deficiend raw EEG data in the code and test it.
 
 \end{enumerate}
 
@@ -300,15 +270,24 @@ As described in the section 4.2.6 in SRS, \progname{}  shall perform the correct
 
 Control: Mixed manual and automatic
 					
-Input: EEG data simulated from one and three dipoles in known locations (we set coordination of the source in the head model) with known activity and known added noise.
-					
+Input: EEG data simulated from one and three dipoles in known locations (we set coordination of the source in the head model) with known activity and known added noise. (Please find the test case generator script in the software Github repo under src/test)
+
+Dipole locations, frequency and amplitude(strength):
+\[
+\begin{bmatrix}
+ -50& -10& 30 & $70 sin(10$\pi$t )$\\
+ 40 &-10& 20 &  $100 cos(20$\pi$t )$ \\
+ -10& 20 &-10&  $90 cos(30$\pi$t )$
+\end{bmatrix} 
+\]
+
+	
 Output: The expected output is the \progname{} generates a matrix of source time series and plot of the brain activity map in the same locations as the locations we set for the simulating the EEG data.
-%\wss{The expected result for the given inputs}
 
-Test Case Derivation: 
+How test will be performed: A test script would simulate the EEG data for the location and amplitude of the current dipoles (sources) and then it will feed this data to the code and obtain the coordination of the most active sources based on the averaged power over time. Finally, the norm of the difference between the known coordination and software output will be calculated and reported. It will be judged against the resolution of the source map (the brain voxel size).\\
+ Also, this script will plot the dipoles from which we simulate the EEG data and also we plot the output of the software for the simulated EEG data and it can be manually judged by eyes. 
 
-How test will be performed: We will manually obtain the source time series from the Brainstorm software and then, s test script would compare the norm of the difference between this software's output and the Brainstorm software output. Finally, a relative error would be calculated and reported.\\
-Also, we will plot the source activity maps in Brainstorm and also we plot the output of the software for the BCI iv competition EEG data and the correctness can be manually judged by eyes. 
+
 
 
 \item{test-Brainstorm-PseudoOracle\\}
@@ -318,13 +297,9 @@ Control: Automatic
 Input: EEG data for BCI IV competition dataset \cite{dataset1BCIcompetitionIV} to software and to the Brainstorm software as pseudo-oracle. 
 
 Output: The expected output is the \progname{} generates a matrix of source time series and a plot of the brain activity map in the same locations as the Brainstorm software would.
-%\wss{The expected result for the given inputs}
 
-Test Case Derivation: The matrix above has the rand 2 while the full rank is 3 so it is rank deficients and can be used as test case.
-
-How test will be performed: A test script would simulate the EEG data for the location and amplitude of the current dipoles (sources) and then it will feed this data to the code and obtain the coordination of the most active sources based on the averaged power over time. Finally, the norm of the difference between the known coordination and software output will be calculated and reported. it will be judged against the resolution of the source map (the brain voxel size).\\
- Also, this script will plot the dipoles from which we simulate the EEG data and also we plot the output of the software for the simulated EEG data and it can be manually judged by eyes. 
-
+How test will be performed: We will manually obtain the source time series from the Brainstorm software and then, a test script would compare the norm of the difference between this software's output and the Brainstorm software output. Finally, a relative error would be calculated and reported.\\
+Also, we will plot the source activity maps in Brainstorm and also we plot the output of the software for the BCI iv competition EEG data and the correctness can be manually judged by eyes. 
 
 \end{enumerate}
 
@@ -335,7 +310,7 @@ How test will be performed: A test script would simulate the EEG data for the lo
 
 \subsection{Tests for Nonfunctional Requirements}
 
-The \progname{} software has a nonfunctional requirements regarding accuracy (NFR1). The accuracy for the computed solution should meet the level of accuracy achieved by other commercial softwares which here we only compare it with Brainstorm. The test would be done just same as section 5.1.2, test-Brainstorm-PseudoOracle. 
+The \progname{} software has a nonfunctional requirements regarding accuracy (NFR1). Generally, due to the nature of the problem, it is very hard to obtain a measure of accuracy or error for an arbitrary EEG signal. Based on the developer's knowledge to this date, the only dataset which the exact location of the source is know is the ground truth dataset (mentioned earlier). Thus, the accuracy for the computed solution should meet the level of accuracy achieved by other commercial softwares on the ground truth dataset publish in \cite{Mikulan2020}. Also, the test introduced in section 5.1.2, test-Brainstorm-PseudoOracle would be a good measure of comparison.
 
 %\wss{The nonfunctional requirements for accuracy will likely just reference the
 %  appropriate functional tests from above.  The test cases should mention
@@ -388,7 +363,7 @@ The \progname{} software has a nonfunctional requirements regarding accuracy (NF
 		\hline        
 		& R1 & R2 & R3 & R4 & R5 & NR1 \\
 		\hline
-		Test-input        &X & & & & & \\ \hline
+		test-input        &X & & & & & \\ \hline
 		test-rank        & &X & & & &  \\ \hline
 		test-SimulatedEEG        & & &X & X& & \\ \hline
 		test-BrainstormPseudoOracle        & & & &X & X& X \\ \hline
