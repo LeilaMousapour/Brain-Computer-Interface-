@@ -40,8 +40,7 @@ For running EEGSourceLocalizer on a system (Windows/Mac) follwoing toolboxed sho
 - EEGLab (https://sccn.ucsd.edu/eeglab/download.php)
 
 
-
-To initiate running a simulation on SPDFM: 
+To use EEGsourceLocalizer:
 
 0- Download or clone src folder on your system
 
